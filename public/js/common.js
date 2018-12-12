@@ -109,9 +109,10 @@ function toggleCollapse(id) {
 
 }
 function showLargeLoading(containter) {
-    var html = '<div class="light-layer"></div><div id="overlay_loading"  class="overlay" style="display:block">' +
+    var html = '</div><div id="overlay_loading"  class="overlay" style="display:block">' +
             '<div class="large-loading"></div>' +
             '</div>';
+    $('#content').append('<div class="light-layer">');
     // $(containter).css({
     //     'opacity': '0.3',
     //     'filter': 'alpha(opacity=30)'
@@ -131,7 +132,7 @@ function showSmallLoading(containter) {
 function hideOverLoading(containter) {
     $("#overlay_loading").remove();
     $(containter + " .light-layer").remove();
-
+    $('#content .light-layer').remove();
     $(containter).css({
         'opacity': '1',
         'filter': 'alpha(opacity=1)'

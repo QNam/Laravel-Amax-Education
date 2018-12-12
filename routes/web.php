@@ -18,6 +18,7 @@ Route::get('/student', 'StudentController@index')->name('StudentIndex');
 Route::post('/student/editName', 'StudentController@editStudentName')->name('StudentEditName');
 Route::post('/student/save', 'StudentController@store')->name('StudentStore');
 Route::post('/student/get', 'StudentController@getStudentInfo')->name('StudentGetOne');
+Route::post('/student/filter', 'StudentController@getStudentFromFilter')->name('StudentGetFilter');
 
 
 

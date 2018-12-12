@@ -26,4 +26,9 @@ class Course extends Model
     					->get(['course.*','tea_name']);
     }
 
+     public function students()
+    {
+        return $this->belongsToMany(Student::class,'register','cou_id','stu_id');
+    }
+
 }

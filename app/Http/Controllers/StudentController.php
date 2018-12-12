@@ -4,15 +4,68 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Contracts\Support\Htmlable;
 
 use App\Model\Student as StudentModel;
+use App\Model\Register as RegModel;
+use App\Model\Course as CourseModel;
 
 class StudentController extends Controller
 {
-    public function _getDocData()
+    public function _getDocData($filter = [], $detail = false)
     {
+        $student   =  new StudentModel();
+        $reg       =  new RegModel();
+        $data      = array();
         
+        foreach ($filter as $key => $value) 
+        {
+            if (empty($value)) {
+                unset( $filter[$key] );
+            }
+        }
+    
+        try{
+            $data =  $student::where($filter)->get();
+        } catch(\Exception $e){}
+
+        if ($detail) {
+            $data =  $reg->getCourseOfStudent($filter);         
+         }
+
+        return $data;
     }
+
+
+    public function index()
+    {
+        $student = new StudentModel();
+        $course  = new CourseModel();
+
+        $data['students'] = $this->_getDocData();
+        $data['courses'] = $course::get(['cou_id','cou_name']);
+
+        $data['title'] = 'Danh sách học sinh';
+
+            
+        return view('student/index')->with($data);
+    }
+
+
+
+    public function getStudentFromFilter(Request $request)
+    {
+        $grade  = $request->input('stuGrade');
+        $course = $request->input('stuCourse');
+
+        $data['students'] = $this->_getDocData(['stu_grade' => $grade, 'course.cou_id' => $course],true);
+
+         $html = view('student/data')->with($data)->render();
+
+         return $html;
+    }
+
+
 
     public function getStudentInfo(Request $request)
     {   
@@ -42,49 +95,45 @@ class StudentController extends Controller
     }
    
    
-    public function index()
-    {
-         $student = new StudentModel();
-
-         $data['students'] = $student::orderBy('updated_at', 'desc')->get();
-
-        $data['title'] = 'Danh sách học sinh';
-        return view('student/data')->with($data);
-    }
+    
 
 
     public function store(Request $request)
     {
-        $stuId = $request->input('stuId'); 
-
-        $input = array(
-            'stu_name' => $request->input('stuName'),
-            'stu_class' => $request->input('stuClass'),
-            'parent_phone' => $request->input('parentPhone'),
-            'parent_name' => $request->input('parentName')
-        );
-
         $student = new StudentModel();
+        $course  = new CourseModel();
 
-        if ( !isset($stuId) ) 
+        $student->stu_id = $request->input('stuId'); 
+        $student->stu_name = $request->input('stuName');
+        $student->stu_grade = $request->input('stuGrade');
+        $student->stu_address = $request->input('stuAddress');
+        $student->parent_phone = $request->input('parentPhone');
+        $student->parent_name = $request->input('parentName');
+        
+        $inpCourse = $request->input('regCourse');
+
+        if ( !isset($student->stu_id) ) 
         {
-            if ($student::create($input)) {
-                Session::flash('success', 'Thêm học sinh thành công !'); 
-                return redirect()->route('StudentIndex');
-            } else {
-                Session::flash('error', 'Thêm học sinh thất bại !'); 
-                return redirect()->route('StudentIndex');
-            }
+           \DB::beginTransaction();
 
-        } else {
-            if ($student::where('stu_id',$stuId)->update($input)) {
-                 Session::flash('success', 'Cập nhật học sinh thành công !'); 
+           try{
+                $student->save();
+
+                $student->courses()->attach('1');
+
+                \DB::commit();
+
+                Session::flash('success', 'Cập nhật khóa học thành công !'); 
                 return redirect()->route('StudentIndex');
-            } else {
-                Session::flash('error', 'Cập nhật học sinh thất bại !'); 
+
+           } catch (\Throwable  $e) {
+                \DB::rollback();
+                Session::flash('error', 'Cập nhật khóa học thất bại !'); 
                 return redirect()->route('StudentIndex');
-            }
+           }
+
         }
+
     }
 
         

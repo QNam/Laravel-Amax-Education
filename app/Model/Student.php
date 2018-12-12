@@ -15,4 +15,9 @@ class Student extends Model
         'stu_id', 'stu_name','stu_class', 'parent_name', 'parent_phone'
     ];
 
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class,'register','stu_id','cou_id');
+    }
+
 }
