@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Validator;
 
 use App\Model\Course as CourseModel;
 use App\Model\Teacher as TeacherModel;
@@ -11,14 +12,37 @@ use App\Model\Subject as SubjectModel;
 
 class CourseController extends Controller
 {
- 	public function _getDocData($cou_id)
-    {
-    	 $course = new CourseModel();
+    public $messages = [
+        'couName.required' => "Vui lòng nhập tên lớp học!",
+        'couSubject.required' => "Vui lòng chọn một môn học !",
+        'couSubject.numeric' => "Mã môn học phải là số !",
+        'couTeacher.required' => "Vui lòng chọn một giáo viên",
+        'couTeacher.numeric' => "Mã giáo viên phải là số !"
+    ];
 
-        $data = $course::join('teacher','course.cou_teacher','teacher.tea_id')
-								->join('subject','course.cou_subject','subject.sub_id')
-								->where('cou_id',$cou_id)
-								->get(['course.*','sub_name','tea_name']);
+    public $rules = [
+        'couName' => "required",
+        'couSubject' => "bail|required|numeric",
+        'couTeacher' => "bail|required|numeric",
+        'couPrice' => "bail|required|numeric"
+    ];
+
+ 	public function _getDocData($filter = [])
+    {
+    	$course = new CourseModel();
+
+        foreach ($filter as $key => $value) 
+        {
+            if (empty($value)) {
+                unset( $filter[$key] );
+            }
+        }
+
+        $data = $course->getCourseInfo($filter);
+
+          foreach ($data as $key => $value) {
+            $value['num_student'] = $course->getTotalStudentOfCourse($value['cou_id']);
+        }
 
 		return $data;
     }
@@ -28,8 +52,7 @@ class CourseController extends Controller
     	$cou_id = $request->input('cou_id');
         $course = new CourseModel();
 
-    	$data = $this->_getDocData($cou_id);
-
+    	$data = $this->_getDocData(['cou_id' => $cou_id]);
 
         if ( !isset($data) ) {
             return response()->json(['msg'=>'Không tìm thấy thông tin khóa học !', 'success'=>false]);
@@ -57,15 +80,29 @@ class CourseController extends Controller
     	$subject  = new SubjectModel();
 
     	$data['title'] = 'Danh sách khóa học';
-    	$data['courses'] = $course::join('teacher','course.cou_teacher','teacher.tea_id')
-    								->join('subject','course.cou_subject','subject.sub_id')
-    								->orderBy('updated_at','desc')
-    								->get(['course.*','sub_name','tea_name']);
-
+    	$data['courses'] = $this->_getDocData();
     	$data['subjects'] = $subject::get(['sub_id','sub_name']);
     	$data['teachers'] = $teacher::get(['tea_id','tea_name']);
 
-    	return view('course/list')->with($data);
+    	return view('course/index')->with($data);
+    }
+
+
+    public function deleteCourse(Request $request)
+    {
+        $course   = new CourseModel();
+        $cou_id = $request->input('couId');
+
+        try{
+
+            $course::where('cou_id',$cou_id)->delete();
+
+            return response()->json(['msg'=>'Xóa Khóa học thành công !', 'success'=>true]);
+        } catch(\Exception $e) {
+            return response()->json(['msg'=>'Xóa Khóa học thất bại !', 'success'=>false]);
+        }
+
+           
     }
 
 
@@ -78,34 +115,47 @@ class CourseController extends Controller
     		'cou_name' => $request->input('couName'),
     		'cou_teacher' => $request->input('couTeacher'),
     		'cou_subject' => $request->input('couSubject'),
-    		'cou_class' => $request->input('couClass'),
     		'cou_price' => $request->input('couPrice'),
     		'cou_desc' => $request->input('couDesc'),
     	];
 
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
+
+        if ( $validator->fails() ) {
+           return redirect()->route('CourseIndex')->withErrors($validator)->withInput();
+        }
+        
 
 		if (isset($cou_id)) {
-    		if ( $course::where('cou_id',$cou_id)->update($input) ) {
-				Session::flash('success', 'Cập nhật khóa học thành công !'); 
 
-             	return redirect()->route('CourseIndex');	
-    		} else {
-    			Session::flash('error', 'Cập nhật khóa học thất bại !'); 
+            try{
+                
+                $course::where('cou_id',$cou_id)->update($input);
 
-             	return redirect()->route('CourseIndex');	
-    		}	
+                Session::flash('success', 'Cập nhật khóa học thành công !'); 
+                return redirect()->route('CourseIndex');    
+
+            }catch(\Exception $e) 
+            {
+                Session::flash('error', 'Cập nhật khóa học thất bại !'); 
+                return redirect()->route('CourseIndex');
+            }
+				
     	}  
     	else 
     	{
-    		if ( $course::create($input) ) {
-    			Session::flash('success', 'Thêm khóa học thành công !'); 
+            try {
 
-             	return redirect()->route('CourseIndex');	
-    		} else {
-    			Session::flash('error', 'Thêm khóa học thất bại !'); 
+    		   $course::create($input);
 
-             	return redirect()->route('CourseIndex');	
-    		}
+                Session::flash('success', 'Thêm khóa học thành công !'); 
+                return redirect()->route('CourseIndex');    
+
+            }catch(\Exception $e) 
+            {
+                Session::flash('error', 'Thêm khóa học thất bại !'); 
+                return redirect()->route('CourseIndex');
+            }
 
     	}
 

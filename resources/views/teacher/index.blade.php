@@ -4,11 +4,19 @@
 
 
 @section('content')
+@if ($errors->any())
+<script>
+	$(window).load(function(){
+		$('#addTeacherModal').modal('show');	
+	});
+	
+</script>
+@endif
 
 <div class="control">
 	<a data-toggle="modal" href='#addTeacherModal'>
 		<button class="control-item btn btn-primary pull-right" 
-			onclick="clearInput(); changeText('#addTeacherModal .modal-title','Thêm giáo viên')">
+			onclick="createModel('#addTeacherModal','add','Thêm Giáo Viên')">
 			<i class="icon icon-plus3"></i>Thêm giáo viên
 		</button>
 	</a>
@@ -22,9 +30,10 @@
 	<thead>
 		<th>Stt</th>
 		<th>Họ Tên</th>
-		<th>Khóa học</th>
+		<th>Chủ nhiệm lớp</th>
 		<th>SDT</th>
-		<th>Status</th>
+		<th>Địa chỉ</th>
+		<th>Nơi công tác</th>
 		<th></th>
 	</thead>
 	<tbody>
@@ -40,22 +49,22 @@
 
 			</td>
 			<td>{{ $teacher->tea_phone }}</td>
-			<td></td>
-			<td class="w-15">						
-				<button type="button" class="btn btn-primary" onclick="">
-					<i class="icon-eye"></i>
-				</button>
-			
-
+			<td>{{ $teacher->tea_address }}</td>
+			<td>{{ $teacher->tea_office }}</td>
+			<td class="w-15">							
 				<button type="button" class="btn btn-warning" 
 					onclick="getTeacherInfo({{$teacher->tea_id}}); 
-					changeText('#addTeacherModal .modal-title','Cập nhật Giáo Viên')">
+					createModel('#addTeacherModal','update','Cập nhật Giáo Viên')">
 					<i class="icon-pencil3"></i>
 				</button>
+				<form action="{{route('TeacherDelete')}}" method="POST" class=.formDeleteTeacher" style="display: inline;">
+					@csrf
+					<input type="hidden" name="teaId" value="{{ $teacher->tea_id }}">
+					<button type="submit" class="btn btn-danger" onclick="deleteTeacher()">
+						<i class="icon-bin"></i>
+					</button>					
+				</form>
 
-				<button type="button" class="btn btn-danger">
-					<i class="icon-bin"></i>
-				</button>
 			</td>
 		</tr>
 		@endforeach
@@ -64,10 +73,10 @@
 
 
 
-<div class="modal fade" id="addTeacherModal">
+<div class="modal fade" id="addTeacherModal" data-state="">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<div class="modal-header">
+			<div class="modal-header bg-primary-600">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h4 class="modal-title">
 					Thêm Giáo Viên
@@ -79,18 +88,27 @@
 					@csrf
 					<input type="hidden" name="teaId" value="">
 					<div class="form-group">
-						<label for="" class="control-label">Tên giáo viên: </label>	
-						<input type="text" placeholder="" class="form-control" name="teaName">		
+						<label for="" class="control-label text-bold">Tên giáo viên: </label>	
+						<input type="text" placeholder="" required="true" class="form-control" name="teaName" value="{{ old('teaName') }}">	
+						{!! $errors->first('teaName', '<label class="error">:message</label>') !!}		
 					</div>
+
 					<div class="form-group">
-						<label for="" class="control-label">SDT: </label>	
-						<input type="text" placeholder="" class="form-control" name="teaPhone">		
+							<label for="" class="control-label text-bold">SDT: </label>	
+							<input type="number" required="" placeholder="" class="form-control" name="teaPhone" value="{{ old('teaPhone') }}">
+							{!! $errors->first('teaPhone', '<label class="error">:message</label>') !!}				
 					</div>
 					
-					<div class="courseList">
-						
-						
+					<div class="form-group">
+						<label for="" class="control-label text-bold">Địa chỉ </label>	
+						<input type="text" placeholder="" class="form-control" name="teaAddress" value="{{ old('teaAddress') }}">	
+						{!! $errors->first('teaAddress', '<label class="error">:message</label>') !!}		
 					</div>
+					<div class="form-group">
+						<label for="" class="control-label text-bold">Nơi công tác: </label>	
+						<input type="text" placeholder="" class="form-control" name="teaOffice" value="{{ old('teaOffice') }}">	
+						{!! $errors->first('teaOffice', '<label class="error">:message</label>') !!}		
+					</div>					
 						
 					<div class="text-right">
 						<button type="submit" class="btn btn-primary">Xác nhận</button>	
@@ -110,12 +128,11 @@
 
 @push('css-file')
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
 @endpush
 
 @push('js-file')
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
 
 @endpush
 
@@ -126,23 +143,18 @@
 	$(document).ready( function () {
 	    $('#listTeacher').DataTable();
 	});	    
-	
-   
 
-    function clearInput()
-    {
-    	$('.courseList p').remove();
-    	$('.courseList').append('<p class="text-muted line-center-text"><span>Danh sách khóa học</span></p>');
-    }
-    
-    // $('#addTeacherModal').modal('show');
-
-
+	function deleteTeacher()
+	{
+		
+		if ( confirm("Giáo viên sẽ không thể xóa khi vẫn chủ nhiệm 1 lớp ! Bạn chắc chắn xóa ?") ) 
+		{
+			$(this).parent().submit();
+		}
+	}
 
     function getTeacherInfo(id)
     {
-    	clearInput();
-
     	$('#addTeacherModal').modal('show');
     	showLargeLoading('#addTeacherModal .modal-content');
     	console.log('a');
@@ -162,12 +174,8 @@
     			$('input[name="teaId"]').val(teacher['tea_id']);
     			$('input[name="teaName"]').val(teacher['tea_name']);
     			$('input[name="teaPhone"]').val(teacher['tea_phone']);
-
-    			 
-    			
-    			teacher['courses'].forEach( function(elem, index) {
-    				$('.courseList').append('<p> + '+elem['cou_name']+'</p>');	
-    			});
+    			$('input[name="teaAddress"]').val(teacher['tea_address']);
+    			$('input[name="teaOffice"]').val(teacher['tea_office']);
 
     		},
     		error:function() {

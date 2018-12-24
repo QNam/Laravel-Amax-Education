@@ -11,7 +11,7 @@ class Teacher extends Model
    public 	  $timestamps	=	true;
    public 	  $incrementing = 	true;
    protected  $fillable = [
-	    'tea_id', 'tea_name','tea_phone'
+	    'tea_id', 'tea_name','tea_phone', 'tea_address','tea_office'
 	];
 
 }

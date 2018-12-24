@@ -20,6 +20,16 @@ table thead th
 .btn-rounded{
 	border-radius: 50%!important;
 }
+.modal-header[class*=bg-] {
+    padding: 5px 20px!important;
+}
+.text-bold{
+    font-weight: bold!important;
+}
+label.error{
+    color: red;
+    margin-top: 5px;
+}
 
 .modal-title{
 	font-weight: bold;
@@ -38,7 +48,9 @@ a.editable-click:hover {
 	margin-left: 0px;
 }
 
-
+.filter{
+    margin-bottom: 20px;
+}
 
 .light-layer{
     position: absolute;

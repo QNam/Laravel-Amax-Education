@@ -23,7 +23,6 @@
 	<script type="text/javascript" src="{{ URL::asset('kit/js/plugins/loaders/pace.min.js') }}"></script>
 	<script type="text/javascript" src="{{ URL::asset('kit/js/core/libraries/jquery.min.js') }}"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="{{ URL::asset('js/plugins/loaders/blockui.min.js') }}"></script>
 	<!-- /core JS files -->
 	
 
@@ -39,11 +38,10 @@
 
 	<!-- Theme JS files -->
 	<script type="text/javascript" src="{{ URL::asset('kit/js/core/app.js') }}"></script>
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+
 	<!-- /theme JS files -->
-
-	
-
+{{-- <link rel="stylesheet" href="{{ URL::asset('css/bootstrap.min.css') }}">
+<script type="text/javascript" src="{{ URL::asset('js/bootstrap.min.js') }}"></script> --}}
 </head>
 
 <body>
@@ -145,10 +143,15 @@
 									</ul>
 								</li>
 								<li>
-									<a href="#"><i class="icon-book"></i> <span>Khóa học</span></a>
+									<a href="#"><i class="icon-book"></i> <span>Lớp học</span></a>
 									<ul>
-										<li><a href="{{url('course')}}">Danh sách khóa học</a></li>
-										<li><a href="{{url('course/register')}}">Đăng kí học</a></li>
+										<li><a href="{{url('course')}}">Danh sách lớp học</a></li>
+									</ul>
+								</li>
+								<li>
+									<a href="#"><i class=" icon-file-text3"></i> <span>Hóa đơn</span></a>
+									<ul>
+										<li><a href="{{route('BillIndex')}}">Danh sách hóa đơn</a></li>
 									</ul>
 								</li>
 
@@ -177,6 +180,7 @@
 							    title: '',
 					            text: "{{Session::get('success') }}",
 					            addclass: 'bg-success',
+					            delay: 1000,
 					            icon:''
 							})
 						});
@@ -188,10 +192,12 @@
 					@if (Session::has('warning'))
 					<script>
 						$( window ).load(function() {
+
 						  new PNotify({
 							    title: '',
 					            text: "{{Session::get('warning') }}",
 					            addclass: 'bg-warning',
+					            delay: 1000,
 					            icon:''
 							})
 						});
@@ -200,13 +206,14 @@
 					</script>
 					@endif
 
-					@if (Session::has('erroe'))
+					@if (Session::has('error'))
 					<script>
 						$( window ).load(function() {
 						  new PNotify({
 							    title: '',
-					            text: "{{Session::get('erroe') }}",
-					            addclass: 'bg-erroe',
+					            text: "{{Session::get('error') }}",
+					            addclass: 'bg-danger',
+					            delay: 1000,
 					            icon:''
 							})
 						});
@@ -222,6 +229,7 @@
 							    title: '',
 					            text: "{{Session::get('info') }}",
 					            addclass: 'bg-info',
+					            delay: 1000,
 					            icon:''
 							})
 						});
@@ -245,7 +253,7 @@
 	</div>
 	<!-- /page container -->
 	@stack('js-file')
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+	
 	<script type="text/javascript" src="{{ URL::asset('js/pnotify.custom.min.js') }}"></script>
 	
 	<script>
@@ -259,3 +267,6 @@
 	
 </body>
 </html>
+
+
+	

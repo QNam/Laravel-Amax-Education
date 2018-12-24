@@ -3,111 +3,94 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-var searchBody = 0;
+
+Number.prototype.formatnum = function(n, x) {
+    var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
+    return this.toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), '$&.');
+};  
+
+function _fomatStringToInt(string){
+    str ="";
+
+    if(string == 0) return Number(0);
+
+    if (typeof string === 'string' || string instanceof String){
+        var strArray = string.split(".");
+        for (var i = 0; i < strArray.length; i++) {
+            var str = str+strArray[i];
+        }       
+    }
+    val= parseInt(str);
+    return val;
+
+}
+
 function getResponseText(data) {
     return jQuery.parseJSON(data);
 }
-function getErrorMessage(errors) {
-    var message = "";
-    if ($.isArray(errors)) {
-        $.each(errors, function (index, value) {
-            message += value + "\n";
-        });
-    } else {
-        message = errors;
-    }
-    return message;
-}
-
-function changeText(elem,val)
+ function Modal(dom,state,title) 
 {
-    $(elem).text(val);
+  this.dom = dom;
+  this.title = title;
+  this.state = state;
+
+  this.contruct = function() {
+    $(this.dom).attr('data-state',this.state);
+    $(this.dom + " .modal-title").text(this.title);
+  }
+
+  this.setModalTitle = function(title) {
+    $(this.dom + ' .modal-title').val(title);
+  }
+
+  this.getState = function() {
+    return $(this.dom).attr('data-state');
+  }
+
+  this.setState = function(state) {
+    $(this.dom).attr('data-state',state);
+    this.state = state;
+  }
+
+  this.setDefault = function() {
+
+    $(this.dom + " input[type=text]").val("");
+    $(this.dom + " textarea").val("");
+    $(this.dom + " input[type=number]").val("");
+    $(this.dom + " select").val("");
+    $(this.dom + " input[type=checkbox]").prop('checked',false);
+    $(this.dom + " .error").attr('display','none');
+  }
+
 }
+
+
+function createModel(dom,state,title) 
+{
+    var modal = new Modal(dom,state,title);
+
+    modal.contruct();
+
+    if (modal.getState() == 'update') 
+    {
         
-function getDayOfWeekLable(day) {
-    switch (day) {
-        case 0:
-            return "Thứ 2";
-            break;
-        case 1:
-            return "Thứ 3";
-            break;
-        case 2:
-            return "Thứ 4";
-            break;
-        case 3:
-            return "Thứ 5";
-            break;
-        case 4:
-            return "Thứ 6";
-            break;
-        case 5:
-            return "Thứ 7";
-            break;
-        case 6:
-            return "Chủ nhật";
-        default:
-            return "Ngày không hợp lệ"
-    }
-}
+        $(dom).on('hide.bs.modal', function () { 
+            modal.setState("");
+            modal.setDefault();   
 
-function showSuccessMessages(messages) {
-    var html = '<div id="messages">' +
-            '<div id="message-success" class="message message-success">' + messages +
-            '</div></div>';
-    $("#messages").remove();
-    $('#content').prepend(html);
-}
-function showErrorMessages(messages) {
-    var html = '<div id="messages">' +
-            '<div id="message-error" class="message message-error">' + messages +
-            '</div></div>';
-    $("#messages").remove();
-    $('#content').prepend(html);
-}
-function goBack() {
-    window.history.back();
-}
-// (function ($) {
-//     $.fn.datepicker.dates['vi'] = {
-//         days: ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"],
-//         daysShort: ["CN", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"],
-//         daysMin: ["CN", "T2", "T3", "T4", "T5", "T6", "T7"],
-//         months: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"],
-//         monthsShort: ["Th1", "Th2", "Th3", "Th4", "Th5", "Th6", "Th7", "Th8", "Th9", "Th10", "Th11", "Th12"],
-//         today: "Hôm nay",
-//         clear: "Xóa",
-//         format: "DD, dd/mm/yy",
-//         weekStart: 1,
-//     };
-//     $.fn.datepicker.defaults.autoclose = true;
-//     $.fn.datepicker.defaults.language = 'vi';
-// }(jQuery));
-$(document).ready(function () {
-    if (getCookie("hide_menu") == 1) {
-        hideMenuLeft();
-    }
-});
-function preventParentEvent(event) {
-    event.stopPropagation();
-}
-function hideCollapse(id) {
-    $(id).collapse('hide');
-    return false;
-}
-function toggleCollapse(id) {
-    if ($(id).is(':visible')) {
-        $(id).collapse('hide');
-    } else {
-        $(".resv-row-data").each(function (index, element) {
-            if ($(element).is(':visible')) {
-                $(element).collapse('hide');
-            }
         });
-        $(id).collapse('show');
     }
 
+    if (modal.getState() == 'add') 
+    {
+        $(dom).on('hide.bs.modal', function () { 
+            modal.setState("");
+            $(dom + " label.error").css('display', 'none');   
+
+        });
+    }
 }
+
 function showLargeLoading(containter) {
     var html = '</div><div id="overlay_loading"  class="overlay" style="display:block">' +
             '<div class="large-loading"></div>' +
@@ -129,6 +112,7 @@ function showSmallLoading(containter) {
     });
     $(containter).append(html);
 }
+
 function hideOverLoading(containter) {
     $("#overlay_loading").remove();
     $(containter + " .light-layer").remove();
@@ -138,25 +122,7 @@ function hideOverLoading(containter) {
         'filter': 'alpha(opacity=1)'
     });
 }
-function toggleMenuLeft() {
-    var isHide = $('#column-left').data('hide_menu');
-    if (isHide == 1) {
-        showMenuLeft();
-        setCookie("hide_menu", 2);
-    } else {
-        hideMenuLeft();
-        setCookie("hide_menu", 1);
-    }
-}
 
-function hideMenuLeft() {
-    $('#column-left').addClass('folded');
-    $('#column-left').data('hide_menu', 1);
-}
-function showMenuLeft() {
-    $('#column-left').removeClass('folded');
-    $('#column-left').data('hide_menu', 2);
-}
 function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');
@@ -180,76 +146,16 @@ function setCookie(cname, cvalue, exdays) {
     }
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
-function scrollMenuLeft() {
-    if (searchBody == 0) {
-        searchBody = $(window).height() - $('#search_result .panel-heading').height() - 50;
-    }
-    $('.search-data').slimScroll({
-        height: searchBody,
-        color: '#0059fc',
-    });
-}
-function searchEnterInMenu(event) {
-    if (event.which == 13) {
-        searchInMenu();
-    }
-}
-function searchEnterInForm(event) {
-    if (event.which == 13) {
-        searchInForm();
-    }
-}
 
-function searchInMenu() {
-    var value = $('#menu_search_input').val();
-    if(value.trim() == ''){
-        return;
-    }
-    hideMenuLeft();
-    $('#search_result').show();
-    $('#search_input').val(value);
-    searchAllinfo(value);
-}
-function searchInForm() {
-    var value = $('#search_input').val();
-    if(value.trim() == ''){
-        return;
-    }
-    searchAllinfo(value);
-}
-function searchAllinfo(term) {
-    showLargeLoading('#search_content');
-    $.ajax({
-        method: "GET",
-        url: base_url + "/search?area=adminres",
-        data: {
-            term: term
-        },
-        error: function () {
 
-        },
-        success: function (data)
-        {
-            var response = getResponseText(data);
-            if (response.success) {
-                var htmls = response.data;
-                $('#all_data').html(htmls.all);
-                $('#reservation_data').html(htmls.reservations);
-                $('#customer_data').html(htmls.customers);
-                $('#deal_data').html(htmls.deals);
-                scrollMenuLeft();
-            }
-            hideOverLoading('#search_content');
-        }
-    });
-}
+function showNotify(title,text,addClass)
+{    
 
-function closeBox(id) {
-    $(id).hide();
-}
-function removeElm(id){
-    $(id).remove();
-}
-function formatPrice(x) {
-    return isNaN(x)?"0 đ":x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")+" đ";
+    new PNotify({
+        title: title,
+        text: text,
+        addclass: addClass,
+        icon:'',
+        delay: 1000
+    })
 }
