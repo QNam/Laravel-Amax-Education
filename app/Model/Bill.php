@@ -27,7 +27,7 @@ class Bill extends Model
 
         return $bill::where($filter)
                     ->join('student','student.stu_id','bill.stu_id')
-                    ->get(['bill.*','student.stu_id','student.stu_name']);
+                    ->get(['bill.*','student.stu_id','student.stu_wallet','student.stu_name']);
     }
 
     public function getDetailBill($bill_id)
@@ -36,7 +36,7 @@ class Bill extends Model
 
         return $dBill::where('bill_id',$bill_id)
                     ->join('course','course.cou_id','detail_bill.cou_id')
-                    ->get(['detail_bill.*','course.cou_id','course.cou_name']);
+                    ->get(['detail_bill.*','course.*']);
     }
 
 

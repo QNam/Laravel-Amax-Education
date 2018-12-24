@@ -38,3 +38,4 @@ Route::post('/teacher/get', 'TeacherController@getTeacherInfo')->name('TeacherGe
 
 Route::post('/bill/save', 'BillController@store')->name('BillStore');
 Route::get('/bill/index', 'BillController@index')->name('BillIndex');
+Route::post('/bill/get', 'BillController@getBillInfo')->name('BillGetOne');

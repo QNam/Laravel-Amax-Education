@@ -36,7 +36,7 @@ class BillController extends Controller
     public function _getDocData($filter = [], $detail = false)
     {
         $bill = new BillModel();
-        $data      = array();
+        $data = array();
         
         foreach ($filter as $key => $value) 
         {
@@ -45,7 +45,18 @@ class BillController extends Controller
             }
         }
 
-        return $bill->getBillInfo($filter);
+        try{
+            $data =  $bill->getBillInfo($filter);
+
+            if ($detail) 
+            {
+                foreach ($data as $key => $value) {
+                    $value['details'] = $bill->getDetailBill($value['bill_id']);
+                }
+            }
+        } catch(\Exception $e){}
+
+        return $data;
     }
 
     public function index()
@@ -65,9 +76,10 @@ class BillController extends Controller
         $bill_id = $request->input('billId');
 
         $data =  $this->_getDocData(['bill.bill_id' => $bill_id],true);
+        
 
-        if ( !isset($data) ) {
-            return response()->json(['msg'=>'Không tìm thấy thông tin học sinh !', 'success'=>false]);
+        if ( count($data) == 0 ) {
+            return response()->json(['msg'=>'Không tìm thấy thông tin hóa đơn !', 'success'=>false]);
         }
 
         return response()->json(['msg'=>'Thành công !', 'success'=>true, 'data' => $data]);
@@ -87,11 +99,13 @@ class BillController extends Controller
     	$bDiscount =  $request->input('billDiscount');
     	$bPay      =  $request->input('billPay');
         $stuId     =  $request->input('stuId');
+        $billId     =  $request->input('billId');
         $isExcess  =  $request->input('isExcess');
 
         $bTotal  = 0;
     	$bWallet = 0;
         
+        dd($billId);
 
         $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
@@ -157,6 +171,7 @@ class BillController extends Controller
     	}
 
         try{
+
             \DB::beginTransaction();
             
             $student::where('stu_id',$stuId)->update(['stu_wallet'=> $bWallet]);
@@ -172,12 +187,23 @@ class BillController extends Controller
             $bill->isExcess      =  $isExcess;
 
             $bill->save();
+            \DB::commit();
 
-            $billInsert = $bill::first();
+        } catch(\Exception $e) {
+            \DB::rollback();
+            return response()->json(['msg'=>'Có lỗi trong quá trình xử lý !', 'success'=>false]);
+        }
+
+
+        try{
+            
+            \DB::beginTransaction();
+
+           
 
             foreach ($bCourses as $key => $value) {
                 $data = [
-                    'bill_id'       => $billInsert->bill_id,
+                    'bill_id'       => $bill->bill_id,
                     'cou_id'        => $bCourses[$key]['couId'],
                     'total_lesson'  => $bCourses[$key]['totalLesson'],
                     'discount'      => $bCourses[$key]['couDiscount'],

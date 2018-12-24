@@ -26,7 +26,7 @@
 						</a>
 
 						<ul class="dropdown-menu dropdown-menu-right" style="padding: 10px; width: 150px;">
-							<button type="button" class="btn btn-primary" data-toggle="modal" href='#Modal_DetailBillInfo' onclick="getDetailBillInfo({{$bill->bill_id}})">
+							<button type="button" class="btn btn-primary" onclick="getDetailBillInfo({{$bill->bill_id}})">
 								<i class="icon-eye"></i>
 							</button>
 						

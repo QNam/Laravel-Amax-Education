@@ -45,19 +45,36 @@
 </div>
 
 
-<div class="modal fade" id="Modal_DetailBillInfo">
-	<div class="modal-dialog" style="width: 80vw">
+<div class="modal fade" id="payModal">
+	<div class="modal-dialog" style="width: 90vw">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h4 class="modal-title">Chi tiết hóa đơn</h4>
 			</div>
 			<div class="modal-body">
-			
-			<div class="pull-right">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+						<p class="text-bold">Người nộp: </p>
+						<p class="text-bold">Đóng học tháng: </p>
+						<p class="text-bold">Ngày lập: </p>
+						<p class="text-bold">Lần cập nhật mới nhất: </p>
+					</div>
+					<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+						<p class="bStudent"></p>
+						<p class="bMonth"></p>
+						<p class="bCreated"></p>
+						<p class="bUpdated"></p>
+					</div>
+
+				</div>
+
+				<div class="row" style="margin-top: 20px;">
+					@include('student.bill-form')
+				</div>
 			</div>
-			<div class="clearfix"></div>
+		
 
 			</div>
 			
@@ -81,22 +98,75 @@
 @push('js-code')
 <script>
 	$(document).ready( function () {
-
+			 $("#payForm").submit(function(e){
+		        e.preventDefault(e);
+		    });
 	});
 
 
 	function getDetailBillInfo(id)
 	{
 		$.ajax({
-				url: '{{route('DeleteStudent')}}',
+				url: '{{route('BillGetOne')}}',
 				type: 'POST',
 				data: {
-					stuId: id
+					billId: id
 				},
 				success: function(data) {
 					console.log('success');
+					console.log(data);
+
+					if (data['success'] == false) 
+					{
+						showNotify("",data['msg'],'bg-danger');
+						
+						return false;
+					}
+					$('#payModal').modal('show');
+
+					var bill = data['data'][0]; 
+					var detail = data['data'][0]['details'];
+
+					$('input[name=pStuId]').val(bill['stu_id']);
+					$('input[name=billId]').val(bill['bill_id']);
+					$('.bStudent').text(bill['stu_name']);
+					$('.bMonth').text(bill['month']);
+					$('.bCreated').text(bill['created_at']);
+					$('.bUpdated').text(bill['updated_at']);
 					
-					
+					var html = "";
+
+					$('.stuWallet').text( Number(bill['stu_wallet']).formatnum() );
+					$('select[name=billMonth] option:eq('+ bill['month']  +')').prop('selected', true);
+					$('input[name=billDiscount]').val(bill['bill_discount']);
+					$('input[name=billTotal]').val(Number(bill['bill_total']).formatnum() );
+					$('input[name=billPay]').val(bill['bill_pay']);
+
+					detail.forEach( function(elem,index){
+
+    					html = '<tr id="pCou-'+elem['cou_id']+'" class="pCouItem">'
+    									+'<input type="hidden" class="payCouId" value="'+elem['cou_id']+'">'
+    									+'<td class="payCouName">'+elem['cou_name']+'</td>'
+										+'<td class="pCouPrice">'+Number(elem['cou_price']).formatnum()+'</td>'
+										+'<td>'
+										+'<input type="number" class="form-control pTotalLesson" required="true" name="pTotalLesson[]" onkeyup="createTotalOfCourse('+elem['cou_id']+'); createTotalBill();" value="'+elem['total_lesson']+'">'
+										+'</td>'
+										+'<td>'
+										+'<input type="number" class="form-control pCouDiscount" min="0" max="100" value="'+elem['discount']+'" name="pCouDiscount[]" onkeyup="createTotalOfCourse('+elem['cou_id']+'); createTotalBill(); "  placeholder="%">'
+										+'</td>'
+										+'<td><input type="text" class="form-control pCouTotal" placeholder="VND" disabled="true">'
+											
+										+'</td>'
+										+'<td class="text-center">'
+											
+										+'</td>'
+									+'</tr>'
+						$('#payCourseInfo').append(html);
+						createTotalOfCourse(elem['cou_id']);
+    				});
+
+    				createTotalBill();
+    				createBillNotify();
 				},
 				error: function() {
 					console.log('error');
