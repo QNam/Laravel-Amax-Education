@@ -12,8 +12,8 @@
 */
 
 Route::get('/', function () {
-    return view('template/layout')->with(['title' => 'Amax Education']);
-});
+    return view('dashboard/index')->with(['title' => 'Amax Education']);
+})->name('index');
 Route::get('/student', 'StudentController@index')->name('StudentIndex');
 Route::post('/student/editName', 'StudentController@editStudentName')->name('StudentEditName');
 Route::post('/student/save', 'StudentController@store')->name('StudentStore');
@@ -34,6 +34,12 @@ Route::get('/teacher', 'TeacherController@index')->name('TeacherIndex');
 Route::post('/teacher/store', 'TeacherController@store')->name('TeacherStore');
 Route::post('/teacher/delete', 'TeacherController@deleteTeacher')->name('TeacherDelete');
 Route::post('/teacher/get', 'TeacherController@getTeacherInfo')->name('TeacherGetOne');
+
+
+Route::get('/subject', 'SubjectController@index')->name('SubjectIndex');
+Route::post('/subject/store', 'SubjectController@store')->name('SubjectStore');
+Route::post('/subject/delete', 'SubjectController@deleteSubject')->name('SubjectDelete');
+Route::post('/subject/get', 'SubjectController@getSubjectInfo')->name('SubjectGetOne');
 
 
 Route::post('/bill/save', 'BillController@store')->name('BillStore');

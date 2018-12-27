@@ -9,6 +9,7 @@ use Validator;
 use App\Model\Student as StudentModel;
 use App\Model\Register as RegModel;
 use App\Model\Course as CourseModel;
+use App\Model\Bill as BillModel;
 
 class StudentController extends Controller
 {
@@ -120,7 +121,7 @@ class StudentController extends Controller
 
         $data =  $this->_getDocData(['student.stu_id' => $id],true);
 
-        if ( !isset($data) ) {
+        if ( count($data) == 0 ) {
             return response()->json(['msg'=>'Không tìm thấy thông tin học sinh !', 'success'=>false]);
         }
 
@@ -134,6 +135,8 @@ class StudentController extends Controller
         $stu_id = $request->input('stuId');
 
         $student = new StudentModel();
+        $bill    = new BillModel();
+
         $reg     = new RegModel();
 
         
@@ -142,7 +145,7 @@ class StudentController extends Controller
 
          try{
             $reg::where('stu_id',$stu_id)->delete();
-             $student::where('stu_id',$stu_id)->delete();
+            $student::where('stu_id',$stu_id)->delete();
            
            
             \DB::commit();  
@@ -151,7 +154,7 @@ class StudentController extends Controller
 
         } catch (\Throwable  $e) {
             \DB::rollback();
-            //throw $e;  
+            throw $e;  
             response()->json(['msg'=>'Xóa không thành công !', 'success'=>false]);
         }
     } 
@@ -167,9 +170,6 @@ class StudentController extends Controller
     }
    
    
-    
-
-
     public function store(Request $request)
     {
         $student = new StudentModel();

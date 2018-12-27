@@ -71,7 +71,12 @@
 				</div>
 
 				<div class="row" style="margin-top: 20px;">
-					@include('student.bill-form')
+					<form action="{{route('BillStore')}}" method="POST" id="payForm">
+						@include('student.bill-form')	
+						<div class="clearfix">
+							<button type="submit" class="btn btn-primary pull-right" onclick="updateBill()">Cập nhật</button>
+						</div>
+					</form>
 				</div>
 			</div>
 		
@@ -97,12 +102,68 @@
 
 @push('js-code')
 <script>
-	$(document).ready( function () {
-			 $("#payForm").submit(function(e){
-		        e.preventDefault(e);
-		    });
-	});
+	
 
+	function updateBill()
+	{
+		var isExcess = $('input[name=isExcess]:checked').val();
+	    	var billDiscount = $('input[name=billDiscount]').val();
+
+	    	if (isExcess == '') {isExcess = 0}
+	    	if (billDiscount == '') {billDiscount = 0}
+
+	    	var stuId = $('input[name=pStuId]').val();
+	    	var billId = $('input[name=billId]').val();
+	    	if (billId == '') {billId = 0}
+
+
+	    	if ( $("#payForm").valid() ) 
+	    	{
+    			$.ajax({
+
+		    		url: "{{ route('BillStore') }}",
+		    		type: 'POST',
+		    		data: {
+		    			courses: getCourseToPay(),
+		    			stuId: stuId,
+		    			billId: billId,
+		    			billMonth: $('select[name=billMonth]').val(),
+		    			billDiscount: $('input[name=billDiscount]').val(),
+		    			billPay: $('input[name=billPay]').val(),
+		    			isExcess: isExcess
+		    		},
+		    		success: function(data) {
+		    			
+		    			if (data['validate'] == false) 
+		    			{
+		    				
+		    				error = data['data'];
+		    				
+		    				if (typeof error['billMonth'] !== 'undefined')  $('.valid_err_billMonth').text(error['billMonth'][0]);
+		    				if (typeof error['billDiscount'] !== 'undefined')  $('.valid_err_billDiscount').text(error['billDiscount'][0]);
+		    				if (typeof error['billPay'] !== 'undefined')  $('.valid_err_billPay').text(error['billPay'][0]);
+
+		    				return false;
+		    				
+		    			}
+
+		    			console.log(data);
+
+		    			if (data['success'] == true) 
+		    			{
+		    				showNotify("",data['msg'],'bg-success');							
+		    			} else {
+		    				showNotify("",data['msg'],'bg-danger');							
+		    			}
+		    			 
+		    		},	
+		    		error:function(data) {
+		    			console.log(data);
+		    			console.log('error');
+		    		}
+		    	});
+	    	}
+	}
 
 	function getDetailBillInfo(id)
 	{
@@ -113,8 +174,6 @@
 					billId: id
 				},
 				success: function(data) {
-					console.log('success');
-					console.log(data);
 
 					if (data['success'] == false) 
 					{

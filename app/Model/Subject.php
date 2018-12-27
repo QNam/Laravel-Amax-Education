@@ -8,8 +8,10 @@ class Subject extends Model
 {
    protected  $table 		= 	'subject';
    protected  $primaryKey 	= 	'sub_id';
-   public 	  $timestamps	=	true;
+   public 	  $timestamps	=	false;
    public 	  $incrementing = 	true;
+   public 	  $created_at = 	false;
+   public 	  $updated_at = 	false;
    protected  $fillable = [
 	    'sub_id', 'sub_name'
 	];

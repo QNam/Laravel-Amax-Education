@@ -99,14 +99,14 @@ class BillController extends Controller
     	$bDiscount =  $request->input('billDiscount');
     	$bPay      =  $request->input('billPay');
         $stuId     =  $request->input('stuId');
-        $billId     =  $request->input('billId');
         $isExcess  =  $request->input('isExcess');
 
         $bTotal  = 0;
     	$bWallet = 0;
         
-        dd($billId);
+        $billId     =  $request->input('billId');
 
+        // validate
         $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
 
@@ -114,15 +114,21 @@ class BillController extends Controller
              return response()->json(['data'=>$validator->errors(), 'validate'=>false]);
         }
 
+
     	try{
 
-            $stuWallet = $student::where('stu_id',$stuId)->get(['stu_wallet'])['0']['stu_wallet'];
+            $stuWallet = $student::where('stu_id',$stuId)->get(['stu_wallet'])['0']['stu_wallet']; 
 
 
             // create bill detail
     		foreach ($bCourses as $key => $value) 
     		{
     			$bCourses[$key]['cou_price'] = $course::where('cou_id',$value['couId'])->get(['cou_price'])[0]['cou_price'];
+
+                if ( isset($billId) ) {
+                    $bCourses[$key]['cou_price'] = $detailBill::where(['bill_id'=>$billId, 'cou_id'=>$value['couId'] ])
+                                                                ->get(['cou_price'])[0]['cou_price'];                  
+                }
     			
 
     			if ( empty($value['couDiscount']) ) 
@@ -159,16 +165,11 @@ class BillController extends Controller
                 }
 
             }
-
-            // print_r($bCourses);
-            // echo "<br>";
-            // print_r($bTotal);
-            // echo "<br>";
-            // print_r($bWallet);
     		
     	}catch(\Exception $e) {
     		return response()->json(['msg'=>'Dữ liệu bị lỗi !', 'success'=>false]);
     	}
+
 
         try{
 
@@ -176,9 +177,12 @@ class BillController extends Controller
             
             $student::where('stu_id',$stuId)->update(['stu_wallet'=> $bWallet]);
 
+            if ( isset($billId) ) {
+                $bill = $bill::find($billId);                
+            }
+
             $bill->bill_discount =  $bDiscount;
             $bill->bill_total    =  $bTotal;
-            $bill->bill_pay      =  $bPay;
             $bill->bill_pay      =  $bPay;
             $bill->month         =  $bMonth;
             $bill->stu_id        =  $stuId;
@@ -186,6 +190,7 @@ class BillController extends Controller
             $bill->new_debt      =  $bWallet;
             $bill->isExcess      =  $isExcess;
 
+            
             $bill->save();
             \DB::commit();
 
@@ -199,7 +204,24 @@ class BillController extends Controller
             
             \DB::beginTransaction();
 
-           
+            if ( isset($billId) ) {
+                 foreach ($bCourses as $key => $value) {
+                    
+                    $detailBill = new DetailBillModel();
+
+                    $data = [
+                        'total_lesson'  => $bCourses[$key]['totalLesson'],
+                        'discount'      => $bCourses[$key]['couDiscount'],
+                    ];
+
+
+                    $detailBill::where(['cou_id' => $bCourses[$key]['couId'],
+                                        'bill_id' => $bill->bill_id ])->update($data);
+                     \DB::commit();
+
+                    return response()->json(['msg'=>'Cập nhật hóa đơn thành công !', 'success'=>true,'data'=>['stu_id' => $stuId, 'stu_wallet'=> $bWallet] ]);
+                }
+            }
 
             foreach ($bCourses as $key => $value) {
                 $data = [

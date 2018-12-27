@@ -154,7 +154,13 @@
 				<h4 class="modal-title"><i class=" icon-file-text"></i> Thanh toán</h4>
 			</div>
 			<div class="modal-body">
-				@include('student.bill-form')	
+				<form action="{{route('BillStore')}}" method="POST" id="payForm">
+					@include('student.bill-form')	
+					<div class="clearfix">
+						<button type="submit" class="btn btn-primary pull-right" onclick="createBill()">Xác nhận</button>
+					</div>
+				</form>
+				
 			</div>			
 		</div>
 	</div>
@@ -265,7 +271,9 @@ $(document).ready( function () {
 	    selector: '[data-title]'
 	});
 
-
+	$("#payForm").submit(function(e){
+        e.preventDefault(e);
+    });
 });
 
 
@@ -275,7 +283,85 @@ $(document).ready( function () {
 //-----------------------------------------------------------------------------------------------------------------------------------------	   
 //Các hàm liên quan đến thao tác CSDL
 //-----------------------------------------------------------------------------------------------------------------------------------------	   
-	  
+	  function createBill()
+	    {
+	    	/*Lỗi: đẩy lên server thành công (stt 200) nhưng vẫn đả về error
+				Hãy đảm bảo data gửi lên ko null, do việc covert sang kiểu json bị lỗi
+	    	*/
+	    	var isExcess = $('input[name=isExcess]:checked').val();
+	    	var billDiscount = $('input[name=billDiscount]').val();
+
+	    	if (isExcess == '') {isExcess = 0}
+	    	if (billDiscount == '') {billDiscount = 0}
+
+	    	var stuId = $('input[name=pStuId]').val();
+	    	
+
+
+	    	if ( $("#payForm").valid() ) 
+	    	{
+    			$.ajax({
+
+		    		url: "{{ route('BillStore') }}",
+		    		type: 'POST',
+		    		data: {
+		    			courses: getCourseToPay(),
+		    			stuId: stuId,
+		    			billMonth: $('select[name=billMonth]').val(),
+		    			billDiscount: $('input[name=billDiscount]').val(),
+		    			billPay: $('input[name=billPay]').val(),
+		    			isExcess: isExcess
+		    		},
+		    		success: function(data) {
+		    			
+		    			if (data['validate'] == false) 
+		    			{
+		    				
+		    				error = data['data'];
+		    				
+		    				if (typeof error['billMonth'] !== 'undefined')  $('.valid_err_billMonth').text(error['billMonth'][0]);
+		    				if (typeof error['billDiscount'] !== 'undefined')  $('.valid_err_billDiscount').text(error['billDiscount'][0]);
+		    				if (typeof error['billPay'] !== 'undefined')  $('.valid_err_billPay').text(error['billPay'][0]);
+
+		    				return false;
+		    				
+		    			}
+
+		    			if (data['success'] == true) 
+		    			{
+		    				var html = "";
+		    				if( data['data']['stu_wallet'] < 0 ) 
+		    					html = '<p title="Nợ" style="width:70%; font-weight:bold" class="label label-wallet border-left-danger label-striped">'
+		    							+Number(data['data']['stu_wallet'] * - 1).formatnum() +'</p>' 
+
+		    				if( data['data']['stu_wallet'] > 0 ) 
+		    					html = '<p title="Nợ" style="width:70%; font-weight:bold" class="label label-wallet border-left-primary label-striped">'
+		    							+Number(data['data']['stu_wallet']).formatnum() +'</p>' 
+
+		    				if( data['data']['stu_wallet'] == 0 ) 
+		    					html = '<p title="Nợ" style="width:70%; font-weight:bold" class="label label-wallet border-left-success label-striped">'
+		    							+Number(data['data']['stu_wallet']).formatnum() +'</p>'  
+
+
+
+		    				$('#payModal').modal('hide');
+		    				$('#stu-' + data['data']['stu_id'] + ' .td-wallet').html(html);
+		    				showNotify("",data['msg'],'bg-success');							
+		    			} else {
+		    				showNotify("",data['msg'],'bg-danger');							
+		    			}
+		    			 
+		    		},	
+		    		error:function(data) {
+		    			console.log(data);
+		    			console.log('error');
+		    		}
+		    	});
+	    	}
+	    	
+	    	
+	     }
+
 	    function filterStudent()
 	    {
 

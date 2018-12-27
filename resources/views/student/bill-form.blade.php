@@ -1,8 +1,8 @@
-<form action="{{route('BillStore')}}" method="POST" id="payForm">
-	@csrf
-	<input type="hidden" name="pStuId"  value="">
-	<input type="hidden" name="billId"  value="">
-	<div class="row">
+
+@csrf
+<input type="hidden" name="pStuId"  value="">
+<input type="hidden" name="billId"  value="">
+<div class="row">
 	<div class="col-xs-7 col-sm-7 col-md-9 col-lg-9">
 		
 		<div class="panel panel-white">
@@ -134,9 +134,7 @@
 					
 			</div>
 		</div>
-		<div class="clearfix">
-			<button type="submit" class="btn btn-primary pull-right" onclick="createBill()">Xác nhận</button>
-		</div>
+		
 	</div> {{-- /.col5 --}}	
 </div> {{-- /.row --}}
 
@@ -144,19 +142,20 @@
 
 @push('js-code')
 <script>
+	
 	$('#payModal').on('hidden.bs.modal', function () {
-    $('#payModal input').val("");
-    $('#payModal select').val("");
-    $('#payModal textarea').text("");
+	    $('#payModal input').val("");
+	    $('#payModal select').val("");
+	    $('#payModal textarea').text("");
 
-    $('#payModal #alertNotify').html('');
+	    $('#payModal #alertNotify').html('');
 
-    $('#payModal #walletNotify').css('display', 'none');
-    $('#payModal #walletNotify input[name=isExcess]').prop('checked', false);
-    
-    $('#payModal #payCourseInfo tr').remove();
-    $('#payModal .validation-error-label').text("");
-})
+	    $('#payModal #walletNotify').css('display', 'none');
+	    $('#payModal #walletNotify input[name=isExcess]').prop('checked', false);
+	    
+	    $('#payModal #payCourseInfo tr').remove();
+	    $('#payModal .validation-error-label').text("");
+	})
 
 $('#payModal').on('show.bs.modal', function () {
     var d = new Date();
@@ -173,86 +172,7 @@ $('#payModal').on('show.bs.modal', function () {
 //Các hàm liên quan đến Tạo HTML
 //-----------------------------------------------------------------------------------------------------------------------------------------		     
 
-  		function createBill()
-	    {
-	    	/*Lỗi: đẩy lên server thành công (stt 200) nhưng vẫn đả về error
-				Hãy đảm bảo data gửi lên ko null, do việc covert sang kiểu json bị lỗi
-	    	*/
-	    	var isExcess = $('input[name=isExcess]:checked').val();
-	    	var billDiscount = $('input[name=billDiscount]').val();
-
-	    	if (isExcess == '') {isExcess = 0}
-	    	if (billDiscount == '') {billDiscount = 0}
-
-	    	var stuId = $('input[name=pStuId]').val();
-	    	var billId = $('input[name=billId]').val();
-
-	    	if (billId == '') {billId = 0}
-
-
-
-	    	if ( $("#payForm").valid() ) 
-	    	{
-    			$.ajax({
-
-		    		url: "{{ route('BillStore') }}",
-		    		type: 'POST',
-		    		data: {
-		    			courses: getCourseToPay(),
-		    			stuId: stuId,
-		    			billId: billId,
-		    			billMonth: $('select[name=billMonth]').val(),
-		    			billDiscount: $('input[name=billDiscount]').val(),
-		    			billPay: $('input[name=billPay]').val(),
-		    			isExcess: isExcess
-		    		},
-		    		success: function(data) {
-		    			
-		    			if (data['validate'] == false) 
-		    			{
-		    				
-		    				error = data['data'];
-		    				
-		    				if (typeof error['billMonth'] !== 'undefined')  $('.valid_err_billMonth').text(error['billMonth'][0]);
-		    				if (typeof error['billDiscount'] !== 'undefined')  $('.valid_err_billDiscount').text(error['billDiscount'][0]);
-		    				if (typeof error['billPay'] !== 'undefined')  $('.valid_err_billPay').text(error['billPay'][0]);
-		    				
-		    			}
-
-		    			if (data['success']) 
-		    			{
-		    				var html = "";
-		    				if( data['data']['stu_wallet'] < 0 ) 
-		    					html = '<p title="Nợ" style="width:70%; font-weight:bold" class="label label-wallet border-left-danger label-striped">'
-		    							+Number(data['data']['stu_wallet'] * - 1).formatnum() +'</p>' 
-
-		    				if( data['data']['stu_wallet'] > 0 ) 
-		    					html = '<p title="Nợ" style="width:70%; font-weight:bold" class="label label-wallet border-left-primary label-striped">'
-		    							+Number(data['data']['stu_wallet']).formatnum() +'</p>' 
-
-		    				if( data['data']['stu_wallet'] == 0 ) 
-		    					html = '<p title="Nợ" style="width:70%; font-weight:bold" class="label label-wallet border-left-success label-striped">'
-		    							+Number(data['data']['stu_wallet']).formatnum() +'</p>'  
-
-
-
-		    				$('#payModal').modal('hide');
-		    				$('#stu-' + data['data']['stu_id'] + ' .td-wallet').html(html);
-		    				showNotify("",data['msg'],'bg-success');							
-		    			} else {
-		    				showNotify("",data['msg'],'bg-danger');							
-		    			}
-		    			 
-		    		},	
-		    		error:function(data) {
-		    			console.log(data);
-		    			console.log('error');
-		    		}
-		    	});
-	    	}
-	    	
-	    	
-	     }
+  		
 
 	    function getCourseToPay()
 	    {

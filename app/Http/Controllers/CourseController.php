@@ -54,7 +54,7 @@ class CourseController extends Controller
 
     	$data = $this->_getDocData(['cou_id' => $cou_id]);
 
-        if ( !isset($data) ) {
+        if ( count($data) == 0 ) {
             return response()->json(['msg'=>'Không tìm thấy thông tin khóa học !', 'success'=>false]);
         }
 
@@ -62,14 +62,6 @@ class CourseController extends Controller
     }
 
 
-    public function courseRegister()
-    {
-    	$data = array();
-
-    	$data['title'] = 'Đăng kí khóa học';
-    	
-    	return view('course/register-course')->with($data);
-    }
 
     public function index()
     {

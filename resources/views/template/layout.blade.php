@@ -49,7 +49,7 @@
 	<!-- Main navbar -->
 	<div class="navbar navbar-default header-highlight">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="index.html"><img src="{{ URL::asset('images/logo_light.png')}}" alt=""></a>
+			<a class="navbar-brand" href="{{route('index')}}"><img src="{{ URL::asset('images/logo_light.png')}}" alt=""></a>
 
 			<ul class="nav navbar-nav visible-xs-block">
 				<li><a data-toggle="collapse" data-target="#navbar-mobile"><i class="icon-tree5"></i></a></li>
@@ -129,7 +129,7 @@
 
 								<!-- Main -->
 								<li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
-								<li><a href="index.html"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
+								<li><a href="{{route('index')}}"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
 								<li>
 									<a href="#"><i class=" icon-user"></i> <span>Học sinh</span></a>
 									<ul>
@@ -146,6 +146,12 @@
 									<a href="#"><i class="icon-book"></i> <span>Lớp học</span></a>
 									<ul>
 										<li><a href="{{url('course')}}">Danh sách lớp học</a></li>
+									</ul>
+								</li>
+								<li>
+									<a href="#"><i class="icon-book"></i> <span>Môn học</span></a>
+									<ul>
+										<li><a href="{{route('SubjectIndex')}}">Danh sách Môn học</a></li>
 									</ul>
 								</li>
 								<li>
