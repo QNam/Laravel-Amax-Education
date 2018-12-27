@@ -33,5 +33,4 @@ class Student extends Model
                         ->select('student.*')
                         ->get();
     }
-
 }

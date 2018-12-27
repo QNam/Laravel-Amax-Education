@@ -10,6 +10,7 @@ use App\Model\Student as StudentModel;
 use App\Model\Register as RegModel;
 use App\Model\Course as CourseModel;
 use App\Model\Bill as BillModel;
+use App\Model\DetailBill as DetailBillModel;
 
 class StudentController extends Controller
 {
@@ -136,14 +137,22 @@ class StudentController extends Controller
 
         $student = new StudentModel();
         $bill    = new BillModel();
+        $dBill    = new DetailBillModel();
 
         $reg     = new RegModel();
 
-        
 
-        \DB::beginTransaction();
+        try{
+            \DB::beginTransaction();
 
-         try{
+            $billList = $bill::where('stu_id',$stu_id)->get(['bill_id']);
+
+            foreach ($billList as $key => $value) {
+                $dBill::where('bill_id',$value['bill_id'])->delete();    
+            }
+            
+            $bill::where('stu_id',$stu_id)->delete();
+                        
             $reg::where('stu_id',$stu_id)->delete();
             $student::where('stu_id',$stu_id)->delete();
            
