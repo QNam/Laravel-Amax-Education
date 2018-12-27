@@ -480,10 +480,9 @@ $(document).ready( function () {
 					    	}.bind(listCheckBox[i]) );
 					    	
 					    	if (!flag) { $(listCheckBox[i]).prop('checked',false); }
-					    } else {
-					    	$('#addStudentModal').modal('show');
-					    	hideOverLoading('#addStudentModal .modal-dialog');
 					    }
+					    $('#addStudentModal').modal('show');
+					    hideOverLoading('#addStudentModal .modal-dialog'); 
 					    
 	    			} else {
 	    				showNotify("",'Lấy dữ liệu thất bại','bg-danger');
