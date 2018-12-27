@@ -32,7 +32,7 @@
 	                	</ul>
 					</div>
 
-					<h3 class="text-bold" style="font-size: 48px;">{{$tk['student']}}</h3>
+					<h3 class="text-bold" style="font-size: 36px;">{{$tk['student']}}</h3>
 					HỌC SINH
 				</div>
 
@@ -58,7 +58,7 @@
 	                	</ul>
 					</div>
 
-					<h3 class="text-bold" style="font-size: 48px;">{{$tk['teacher']}}</h3>
+					<h3 class="text-bold" style="font-size: 36px;">{{$tk['teacher']}}</h3>
 					GIÁO VIÊN
 				</div>
 			</div>
@@ -86,7 +86,7 @@
 	                	</ul>
 					</div>
 
-					<h3 class="text-bold" style="font-size: 48px;">{{$tk['course']}}</h3>
+					<h3 class="text-bold" style="font-size: 36px;">{{$tk['course']}}</h3>
 					LỚP HỌC
 				</div>
 			</div>
@@ -114,7 +114,7 @@
 	                	</ul>
 					</div>
 
-					<h3 class="text-bold" style="font-size: 48px;">100.000</h3>
+					<h3 class="text-bold" style="font-size: 36px;">100.000</h3>
 					Doanh thu tháng
 				</div>
 			</div>
