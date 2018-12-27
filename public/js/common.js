@@ -92,14 +92,13 @@ function createModel(dom,state,title)
 }
 
 function showLargeLoading(containter) {
-    var html = '</div><div id="overlay_loading"  class="overlay" style="display:block">' +
+    var html = '<div id="overlay_loading"  class="overlay" style="display:block">' +
             '<div class="large-loading"></div>' +
             '</div>';
-    $('#content').append('<div class="light-layer">');
-    // $(containter).css({
-    //     'opacity': '0.3',
-    //     'filter': 'alpha(opacity=30)'
-    // });
+    $(containter).css({
+        'opacity': '0.8',
+        'filter': 'alpha(opacity=80)'
+    });
     $(containter).append(html);
 }
 function showSmallLoading(containter) {
@@ -115,8 +114,7 @@ function showSmallLoading(containter) {
 
 function hideOverLoading(containter) {
     $("#overlay_loading").remove();
-    $(containter + " .light-layer").remove();
-    $('#content .light-layer').remove();
+
     $(containter).css({
         'opacity': '1',
         'filter': 'alpha(opacity=1)'

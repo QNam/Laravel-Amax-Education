@@ -300,6 +300,7 @@ $(document).ready( function () {
 
 	    	if ( $("#payForm").valid() ) 
 	    	{
+	    		showLargeLoading('#payModal .modal-dialog');
     			$.ajax({
 
 		    		url: "{{ route('BillStore') }}",
@@ -316,7 +317,7 @@ $(document).ready( function () {
 		    			
 		    			if (data['validate'] == false) 
 		    			{
-		    				
+							hideOverLoading('#payModal .modal-dialog');
 		    				error = data['data'];
 		    				
 		    				if (typeof error['billMonth'] !== 'undefined')  $('.valid_err_billMonth').text(error['billMonth'][0]);
@@ -343,17 +344,20 @@ $(document).ready( function () {
 		    							+Number(data['data']['stu_wallet']).formatnum() +'</p>'  
 
 
-
+		    				hideOverLoading('#payModal .modal-dialog');
 		    				$('#payModal').modal('hide');
 		    				$('#stu-' + data['data']['stu_id'] + ' .td-wallet').html(html);
 		    				showNotify("",data['msg'],'bg-success');							
 		    			} else {
+		    				hideOverLoading('#payModal .modal-dialog');
+		    				$('#payModal').modal('hide');
 		    				showNotify("",data['msg'],'bg-danger');							
 		    			}
 		    			 
 		    		},	
 		    		error:function(data) {
-		    			console.log(data);
+		    			hideOverLoading('#payModal .modal-dialog');
+						showNotify("",'Lỗi gửi dữ liệu !','bg-danger');	
 		    			console.log('error');
 		    		}
 		    	});
@@ -364,6 +368,7 @@ $(document).ready( function () {
 
 	    function filterStudent()
 	    {
+	    	showLargeLoading('#dataContent');
 
 	    	var grade  = $('select[name="filterGrade"]').val();
 	    	var course = $('select[name="filterCourse"]').val();
@@ -381,10 +386,12 @@ $(document).ready( function () {
 	    		},
 	    		success: function(data){
 	    			$('#dataContent').html(data);
-	    		
+	    			hideOverLoading('#dataContent');
 	    		},
 	    		error:function() {
 	    			console.log('error');	
+	    			showNotify("",'Lỗi gửi yếu cầu !','bg-danger');
+	    			hideOverLoading('#dataContent');
 	    		} 
 	    	});
 	    }
@@ -393,6 +400,7 @@ $(document).ready( function () {
 		function deteleStudent(id)
 		{
 			if (confirm("Bạn có chắc chắn muốn xóa Học Sinh này !")) {
+				showLargeLoading('body');
 				$.ajax({
 					url: '{{route('DeleteStudent')}}',
 					type: 'POST',
@@ -402,22 +410,26 @@ $(document).ready( function () {
 					success: function(data) {
 						console.log('success');
 						
-						console.log(data);
 						if (data['success']) 
 						{
 							showNotify("",data['msg'],'bg-success');
 
 							$('#stu-'+id).fadeTo(500,0, function(){
 								studentDataTable.rows('#stu-'+id).remove().draw();
-							});	
+							});
+							hideOverLoading('body');	
 						} else {
 							showNotify("",data['msg'],'bg-danger');							
+							hideOverLoading('body');
 						}
+
 						
 					},
 					error: function() {
 						console.log('error');
+						hideOverLoading('body');
 						showNotify("",'Xóa Học Sinh thất bại !','bg-danger');
+
 					}
 				});
 			}
@@ -426,55 +438,65 @@ $(document).ready( function () {
 
 	    function getStudentInfo(id)
 	    {
-	    	
+	    	showLargeLoading('#addStudentModal .modal-dialog');
+	    	$('#addStudentModal').modal('show');
 	    	$.ajax({
 	    		url: "{{route('StudentGetOne')}}",
 	    		method: 'POST',
 	    		data: {
 	    			stu_id: id
 	    		},
-	    		success: function(data){
-	    			$('#addStudentModal').modal('show');
+	    		success: function(data)
+	    		{
+	    			if (data['success' == true]) 
+	    			{
+	    				var student = data['data']['0'];
+		    			var courses = data['data']['0']['courses'];
 
-	    			var student = data['data']['0'];
-	    			var courses = data['data']['0']['courses'];
+		    			$('input[name="stuId"]').val(student['stu_id']);
+		    			$('input[name="stuName"]').val(student['stu_name']);
+		    			$('select[name="stuGrade"]').val(student['stu_grade']);
+		    			$('input[name="stuAddress"]').val(student['stu_address']);
+		    			$('input[name="parentName"]').val(student['parent_name']);
+		    			$('input[name="parentPhone"]').val(student['parent_phone']);
 
-	    			$('input[name="stuId"]').val(student['stu_id']);
-	    			$('input[name="stuName"]').val(student['stu_name']);
-	    			$('select[name="stuGrade"]').val(student['stu_grade']);
-	    			$('input[name="stuAddress"]').val(student['stu_address']);
-	    			$('input[name="parentName"]').val(student['parent_name']);
-	    			$('input[name="parentPhone"]').val(student['parent_phone']);
-
-	    			
-	    			var flag = false;
-					var listCheckBox = $("#addStudentModal input[name='regCourse[]']");
-				    	
-				    for(var i = 0; i < listCheckBox.length; i++)
-				    {	
-						flag = false;
-				    	
-				    	courses.forEach( function(element, index) 
-				    	{
-				    		
-							if ($(listCheckBox[i])[0].value == element['cou_id']) 
-				  			{
-				  				$(listCheckBox[i]).prop('checked',true);
-				  				flag = true;
-				  			} 
-				  					
-				    	}.bind(listCheckBox[i]) );
-				    	
-				    	if (!flag) { $(listCheckBox[i]).prop('checked',false); }
-				    }
+		    			
+		    			var flag = false;
+						var listCheckBox = $("#addStudentModal input[name='regCourse[]']");
+					    	
+					    for(var i = 0; i < listCheckBox.length; i++)
+					    {	
+							flag = false;
+					    	
+					    	courses.forEach( function(element, index) 
+					    	{
+					    		
+								if ($(listCheckBox[i])[0].value == element['cou_id']) 
+					  			{
+					  				$(listCheckBox[i]).prop('checked',true);
+					  				flag = true;
+					  			} 
+					  					
+					    	}.bind(listCheckBox[i]) );
+					    	
+					    	if (!flag) { $(listCheckBox[i]).prop('checked',false); }
+					    }
+					    hideOverLoading('#addStudentModal .modal-dialog');
+	    			} else {
+	    				showNotify("",'Lấy dữ liệu thất bại','bg-danger');
+	    				hideOverLoading('#addStudentModal .modal-dialog');	
+	    			}
 
 	    		},
-	    		error:function() {
+	    		error:function() 
+	    		{
 	    			console.log('fail');
-	    			
+	    			showNotify("",'Lấy dữ liệu thất bại','bg-danger');
+	    			hideOverLoading('#addStudentModal .modal-dialog');
+	    			$('#addStudentModal').modal('hide');
 	    		}
 	    	});
-
+	    	
 	    
 	    }
 

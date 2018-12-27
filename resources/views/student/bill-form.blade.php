@@ -223,6 +223,7 @@ $('#payModal').on('show.bs.modal', function () {
 	    function getPayCourseInfo(stu_id)
 	    {
 	    	$('#payModal').modal('show');
+	    	showLargeLoading('#payModal .modal-dialog');
 
 	    	$.ajax({
 	    		url: "{{route('StudentGetOne')}}",
@@ -232,7 +233,7 @@ $('#payModal').on('show.bs.modal', function () {
 	    		},
 	    		success: function(data){
 
-	    			if (data['success']) 
+	    			if (data['success'] == true) 
 	    			{
 	    				$('input[name=pStuId]').val(stu_id);
 	    				var student = data['data']['0'];
@@ -257,10 +258,18 @@ $('#payModal').on('show.bs.modal', function () {
 							$('#payCourseInfo').append(html)
 	    				});
 
+	    				hideOverLoading('#payModal .modal-dialog');
+	    			} else {
+
+	    				hideOverLoading('#payModal .modal-dialog');
+	    				$('#payModal').modal('hide');
+	    				showNotify("",'Lấy dữ liệu thấy bại','bg-danger');	
 	    			}
 	    		},
 	    		error:function() {
-	    			console.log('fail');
+	    			hideOverLoading('#payModal .modal-dialog');
+    				$('#payModal').modal('hide');
+    				showNotify("",'Lấy dữ liệu thấy bại','bg-danger');
 	    			
 	    		}
 	    	});
