@@ -14,5 +14,4 @@ yarn-error.log
 .phpunit.result.cache
 .htaccess
 .env
-/config/*
-
+config/app.php
