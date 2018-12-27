@@ -1,4 +1,4 @@
-Ư<?php
+<?php
 
 return [
 
@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost/amax'),
+    'url' => env('APP_URL', 'http://amaxedu.herokuapp.com/'),
 
     'asset_url' => env('ASSET_URL', null),
 
