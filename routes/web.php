@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('dashboard/index')->with(['title' => 'Amax Education']);
-})->name('index');
+Route::get('/','DashboardController@index')->name('index');
 Route::get('/student', 'StudentController@index')->name('StudentIndex');
 Route::post('/student/editName', 'StudentController@editStudentName')->name('StudentEditName');
 Route::post('/student/save', 'StudentController@store')->name('StudentStore');
