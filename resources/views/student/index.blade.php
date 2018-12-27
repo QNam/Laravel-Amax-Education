@@ -448,7 +448,7 @@ $(document).ready( function () {
 	    		},
 	    		success: function(data)
 	    		{
-	    			if (data['success' == true]) 
+	    			if (data['success'] == true) 
 	    			{
 	    				var student = data['data']['0'];
 		    			var courses = data['data']['0']['courses'];
@@ -491,7 +491,7 @@ $(document).ready( function () {
 	    		error:function() 
 	    		{
 	    			console.log('fail');
-	    			showNotify("",'Lấy dữ liệu thất bại','bg-danger');
+	    			showNotify("",'Gửi dữ liệu thất bại !','bg-danger');
 	    			hideOverLoading('#addStudentModal .modal-dialog');
 	    			$('#addStudentModal').modal('hide');
 	    		}
