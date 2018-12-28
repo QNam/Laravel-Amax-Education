@@ -12,7 +12,9 @@
 	<!-- Global stylesheets -->
 	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
 	<link href="{{ URL::asset('kit/css/icons/icomoon/styles.css') }}" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	{{-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> --}}
+	<link rel="stylesheet" href="{{ URL::asset('css/bootstrap.min.css') }}">
+
 	<link href="{{ URL::asset('kit/css/core.min.css') }}" rel="stylesheet" type="text/css">
 	<link href="{{ URL::asset('kit/css/components.min.css') }}" rel="stylesheet" type="text/css">
 	<link href="{{ URL::asset('kit/css/colors.min.css') }}" rel="stylesheet" type="text/css">
@@ -22,7 +24,8 @@
 	<!-- Core JS files -->
 	<script type="text/javascript" src="{{ URL::asset('kit/js/plugins/loaders/pace.min.js') }}"></script>
 	<script type="text/javascript" src="{{ URL::asset('kit/js/core/libraries/jquery.min.js') }}"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    {{-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> --}}
+    <script type="text/javascript" src="{{ URL::asset('js/bootstrap.min.js') }}"></script>
 	<!-- /core JS files -->
 	
 
@@ -40,8 +43,7 @@
 	<script type="text/javascript" src="{{ URL::asset('kit/js/core/app.js') }}"></script>
 
 	<!-- /theme JS files -->
-{{-- <link rel="stylesheet" href="{{ URL::asset('css/bootstrap.min.css') }}">
-<script type="text/javascript" src="{{ URL::asset('js/bootstrap.min.js') }}"></script> --}}
+
 </head>
 
 <body>

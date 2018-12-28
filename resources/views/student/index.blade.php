@@ -494,7 +494,7 @@ $(document).ready( function () {
 	    		error:function() 
 	    		{
 	    			console.log('fail');
-	    			showNotify("",'Gửi dữ liệu thất bại !','bg-danger');
+	    			showNotify("",'Lấy dữ liệu thất bại !','bg-danger');
 	    			hideOverLoading('#addStudentModal .modal-dialog');
 	    			$('#addStudentModal').modal('hide');
 	    		}
