@@ -58,7 +58,23 @@
 
 
 <div id="dataContent">
-@include('student.data')	
+	<table id="listStudent" class="table table-bordered">
+
+	<thead>
+		<th class="text-center">Stt</th>
+		<th class="text-center">Họ Tên</th>
+		<th class="text-center">Khối</th>
+		<th class="text-center">Địa chỉ</th>
+		<th class="text-center">Phụ huynh</th>
+		<th class="text-center">SDT Phụ Huynh</th>
+		<th class="text-center">Nợ/dư</th>
+		<th></th>
+	</thead>
+	<tbody>
+		@include('student.data')
+	</tbody>
+</table>
+	
 </div>
 
 
@@ -265,6 +281,24 @@ $(document).ready( function () {
         
     });  
 
+	var studentDataTable;
+	$(document).ready( function () {
+	    studentDataTable = $('#listStudent').DataTable({
+	    	searching: false,
+	    	lengthChange: false,
+	    	language: {
+		      emptyTable: "<h3>Không tìm thấy dữ liệu !</h3>"
+		    }
+	    });
+
+	    $('.td-wallet p').each(function(index, el) {
+	    	var toCash = Number($(el).text()).formatnum();
+	    	$(el).text(toCash);
+	    	
+	    });
+	});
+
+	
 	$.fn.editable.defaults.mode = 'poppup';
 
 	$("body").tooltip({
@@ -385,7 +419,7 @@ $(document).ready( function () {
 	    			stuWallet: wallet
 	    		},
 	    		success: function(data){
-	    			$('#dataContent').html(data);
+	    			$('#listStudent tbody').html(data);
 	    			hideOverLoading('#dataContent');
 	    		},
 	    		error:function() {
@@ -487,7 +521,7 @@ $(document).ready( function () {
 	    			} else {
 	    				showNotify("",'Lấy dữ liệu thất bại','bg-danger');
 	    				hideOverLoading('#addStudentModal .modal-dialog');	
-	    				$('#addStudentModal').modal('show');
+	    				$('#addStudentModal').modal('hide');
 	    			}
 
 	    		},

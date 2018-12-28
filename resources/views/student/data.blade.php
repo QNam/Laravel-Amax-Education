@@ -1,40 +1,29 @@
-<table id="listStudent" class="table table-bordered">
 
-	<thead>
-		<th class="text-center">Stt</th>
-		<th class="text-center">Họ Tên</th>
-		<th class="text-center">Khối</th>
-		<th class="text-center">Địa chỉ</th>
-		<th class="text-center">Phụ huynh</th>
-		<th class="text-center">SDT Phụ Huynh</th>
-		<th class="text-center">Nợ/dư</th>
-		<th></th>
-	</thead>
-	<tbody>
+	
 		<?php $i = 0; ?>
 
 		@foreach ($students as $key => $student)
 				
 			<tr id="stu-{{ $student->stu_id }}">
-				<td class="text-center w-5"><?=++$i ?></td>
-				<td>
-					<a href="" class="stuName" 
+				<td class="text-center w-5 stu-render-1"><?=++$i ?></td>
+				<td class="stu-render-1">
+					<a href="javascript:void(0)" class="stuName" 
 						data-type="text" 
 						data-pk="{{$student->stu_id}}" 
 						data-url="{{ route('StudentEditName') }}" 
 						data-title="Click vào để sửa">
 						{{ $student->stu_name }}</a>	
 				</td>
-				<td class="text-center w-5">{{ $student->stu_grade }}</td>	
-				<td>{{ $student->stu_address }}</td>	
-				<td>{{ $student->parent_name }}</td>	
-				<td>{{ $student->parent_phone }}</td>
-				<td class="text-center td-wallet"> 
-					{!! $student->stu_wallet == 0 ? "<p title='Nộp đủ' style='width:70%; font-weight:bold' class='label label-wallet border-left-success label-striped' > $student->stu_wallet </p>" : "" !!}
-					{!! $student->stu_wallet > 0 ? "<p title='Thừa' style='width:70%; font-weight:bold' class='label label-wallet border-left-primary label-striped' > $student->stu_wallet </p>" : "" !!}
-					{!! $student->stu_wallet < 0 ? "<p title='Nợ' style='width:70%; font-weight:bold' class='label label-wallet border-left-danger label-striped' >". ($student->stu_wallet * -1) ."</p>" : "" !!}
+				<td class="text-center w-5 stu-render-3">{{ $student->stu_grade }}</td>	
+				<td class=" stu-render-4">{{ $student->stu_address }}</td>	
+				<td class=" stu-render-5">{{ $student->parent_name }}</td>	
+				<td class=" stu-render-6">{{ $student->parent_phone }}</td>
+				<td class="text-center td-wallet stu-render-7"> 
+					{!! $student->stu_wallet == 0 ? "<p title='Nộp đủ' style='width:70%' class='label label-wallet text-bold border-left-success label-striped' > $student->stu_wallet </p>" : "" !!}
+					{!! $student->stu_wallet > 0 ? "<p title='Thừa' style='width:70%' class='label label-wallet text-bold border-left-primary label-striped' > $student->stu_wallet </p>" : "" !!}
+					{!! $student->stu_wallet < 0 ? "<p title='Nợ' style='width:70%' class='label label-wallet text-bold border-left-danger label-striped' >". ($student->stu_wallet * -1) ."</p>" : "" !!}
 				</td>
-				<td class="w-5 text-center">
+				<td class="w-5 text-center stu-render-8">
 					<ul class="icons-list pull-left">
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -63,26 +52,4 @@
 
 
 		@endforeach
-	</tbody>
-</table>
-
-<script>
-	var studentDataTable;
-	$(document).ready( function () {
-	    studentDataTable = $('#listStudent').DataTable({
-	    	searching: false,
-	    	lengthChange: false,
-	    	language: {
-		      emptyTable: "<h3>Không tìm thấy dữ liệu !</h3>"
-		    }
-	    });
-
-	    $('.td-wallet p').each(function(index, el) {
-	    	var toCash = Number($(el).text()).formatnum();
-	    	$(el).text(toCash);
-	    	
-	    });
-	});
-
 	
-</script>

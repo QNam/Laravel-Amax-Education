@@ -57,6 +57,7 @@ function getResponseText(data) {
     $(this.dom + " input[type=text]").val("");
     $(this.dom + " textarea").val("");
     $(this.dom + " input[type=number]").val("");
+    $(this.dom + " input[type=time]").val("");
     $(this.dom + " select").val("");
     $(this.dom + " input[type=checkbox]").prop('checked',false);
     $(this.dom + " .error").attr('display','none');

@@ -76,14 +76,47 @@
 						</div>
 						
 					</div>
-					<div class="form-group">
+
+
+					<div class="row form-group">
+						<div class="col-lg-6">
+							<label for="" class="text-bold">Giờ bắt đầu:</label>
+							<input type="time" class="form-control"  name="couStart" required="true" value="{{ old('couStart') }}">
+							{!! $errors->first('couStart', '<label class="error">:message</label>') !!}	
+						</div>
+
+						<div class="col-lg-6">
+							<label for="" class="text-bold">Giờ kết thúc:</label>
+							<input type="time" name="couEnd" class="form-control" required="true" value="{{ old('couEnd') }}">
+							{!! $errors->first('couEnd', '<label class="error">:message</label>') !!}	
+						</div>						
+					</div>
+
+
+					<div class="row form-group">
+						<div class="col-lg-6">
 							<label for="" class="text-bold">Giá:</label>
 							<input type="number" name="couPrice" placeholder="" required="true" class="form-control" value="{{ old('couPrice') }}">	
 							{!! $errors->first('couPrice', '<label class="error">:message</label>') !!}
-					</div>	
+						</div>
+
+
+						<div class="col-lg-6">
+							<label for="" class="text-bold">Khối:</label>
+
+							<select name="couGrade" id="" required="true" class="form-control">
+								<option value="">-- Chọn khối --</option>
+								<?php for($i = 1; $i <= 12; $i++) { ?>		
+								<option value="{{$i}}" {{ old('couPrice') == $i ? "select" : "" }}>{{$i}}</option>
+								<?php } ?>
+							</select>
+							{!! $errors->first('couGrade', '<label class="error">:message</label>') !!}
+						</div>
+						
+					</div>
 
 					<div class="form-group">
-						<label for="" class="text-bold">Mô tả	</label>
+						<label for="" class="text-bold">Mô tả</label>
 						<textarea name="couDesc" class="w-100" cols="10" rows="5">{{ old('couDesc') }}</textarea>
 						{!! $errors->first('couDesc', '<label class="error">:message</label>') !!}
 					</div>
@@ -94,6 +127,35 @@
 					
 				</form>
 
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="modalViewCourse">
+	<div class="modal-dialog" style="width: 80vw">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title"><i class="icon icon-list"></i>  Danh sách học sinh</h4>
+			</div>
+			<div class="modal-body">
+				
+				<table id="viewCourseData" class="table table-bordered">
+					<thead>
+						<th class="text-center text-bold">Stt</th>
+						<th class="text-center text-bold">Họ tên</th>
+						<th class="text-center text-bold">Khối</th>
+						<th class="text-center text-bold">Địa chỉ</th>
+						<th class="text-center text-bold">Phụ huynh</th>
+						<th class="text-center text-bold">SDT</th>
+						<th class="text-center text-bold">Nợ/dư</th>
+					</thead>
+					<tbody>
+						
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
@@ -115,14 +177,20 @@
 
 @push('js-code')
 <script>
+	var viewCourseDataTable;
 	$(document).ready( function () {
 
-		
 
 	});
+
+	$('#modalViewCourse').on('hidden.bs.modal', function () {
+	   viewCourseDataTable.destroy();
+	});
+
+	
 </script>
 <script>
-
+	
     function getCourseInfo(id)
     {
     	$('#addCourseModal').modal('show');
@@ -146,14 +214,51 @@
 	    			$('select[name="couSubject"]').val(course['cou_subject']);
 	    			$('select[name="couTeacher"]').val(course['cou_teacher']);
 	    			$('select[name="couClass"]').val(course['cou_class']);
+	    			$('select[name="couGrade"]').val(course['cou_grade']);
 	    			$('input[name="couPrice"]').val(course['cou_price']);
+	    			$('input[name="couStart"]').val(course['cou_start']);
+	    			$('input[name="couEnd"]').val(course['cou_end']);
 	    			$('textarea[name="couDesc"]').val(course['cou_desc']);	
-    			}
-    			
-
+    			} 
     		},
     		error:function() {
     			console.log('fail');
+    		}
+    	})
+    }
+
+
+    function getStudentOfCourse(id)
+    {
+    	$('#modalViewCourse').modal('show');
+    	showLargeLoading('#modalViewCourse .modal-dialog');
+    	
+    	$.ajax({
+    		url: "{{route('StudentGetFilter')}}",
+    		method: 'POST',
+    		data: {
+    			stuCourse: id
+    		},
+    		success: function(data){
+    			$('#viewCourseData tbody').html(data);
+    			$('#viewCourseData tbody .stu-render-8').remove();
+
+    			viewCourseDataTable = $('#viewCourseData').DataTable({
+					language: {
+				      emptyTable: "<h3>Không tìm thấy dữ liệu !</h3>"
+				    }
+				});
+
+			    $('.td-wallet p').each(function(index, el) {
+			    	var toCash = Number($(el).text()).formatnum();
+			    	$(el).text(toCash);
+			    	
+			    });
+    			hideOverLoading('#modalViewCourse .modal-dialog');
+    		},
+    		error:function() {
+    			hideOverLoading('#modalViewCourse .modal-dialog');
+				showNotify("",'Lỗi lấy dữ liệu !','bg-danger');
     		}
     	})
     }

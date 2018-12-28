@@ -119,8 +119,11 @@ class StudentController extends Controller
     public function getStudentInfo(Request $request)
     {   
         $id = $request->input('stu_id');
+        $couId = $request->input('couId');
+        $filter = ['student.stu_id' => $id, 'course.cou_id' => $couId];
 
-        $data =  $this->_getDocData(['student.stu_id' => $id],true);
+
+        $data =  $this->_getDocData($filter,true);
 
         if ( count($data) == 0 ) {
             return response()->json(['msg'=>'Không tìm thấy thông tin học sinh !', 'success'=>false]);

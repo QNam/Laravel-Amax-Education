@@ -17,12 +17,19 @@ class CourseController extends Controller
         'couSubject.required' => "Vui lòng chọn một môn học !",
         'couSubject.numeric' => "Mã môn học phải là số !",
         'couTeacher.required' => "Vui lòng chọn một giáo viên",
-        'couTeacher.numeric' => "Mã giáo viên phải là số !"
+        'couTeacher.numeric' => "Mã giáo viên phải là số !",
+        'couGrade.numeric' => "Khối học phải là số !",
+        'couGrade.required' => "Khối học là bắt buộc !",
+        'couStart.required' => "Giờ bắt đầu là bắt buộc !",
+        'couEnd.required' => "Giờ kết thúc học là bắt buộc !"
     ];
 
     public $rules = [
         'couName' => "required",
         'couSubject' => "bail|required|numeric",
+        'couGrade' => "bail|required|numeric",
+        'couStart' => "bail|required",
+        'couEnd' => "bail|required",
         'couTeacher' => "bail|required|numeric",
         'couPrice' => "bail|required|numeric"
     ];
@@ -108,7 +115,11 @@ class CourseController extends Controller
     		'cou_teacher' => $request->input('couTeacher'),
     		'cou_subject' => $request->input('couSubject'),
     		'cou_price' => $request->input('couPrice'),
-    		'cou_desc' => $request->input('couDesc'),
+            'cou_desc' => $request->input('couDesc'),
+            'cou_start' => $request->input('couStart'),
+            'cou_end' => $request->input('couEnd'),
+    		'cou_grade' => $request->input('couGrade'),
+
     	];
 
         $validator = Validator::make($request->all(), $this->rules, $this->messages);

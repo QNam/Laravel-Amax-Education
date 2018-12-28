@@ -4,6 +4,7 @@
 			<th>Tên lớp học</th>
 			<th>Giáo viên</th>
 			<th>Môn</th>
+			<th>Thời gian học</th>
 			<th>Giá</th>
 			<th>Số HS</th>
 			<th></th>
@@ -16,11 +17,12 @@
 					<td class="w-5 text-center">{{++$i}}</td>
 					<td>{{ $course->cou_name }}</td>
 					<td>{{ $course->tea_name }}</td>
-					<td class="w-5">{{ $course->sub_name }}</td>
+					<td class="w-5">{{ $course->sub_name }} {{ " - ".$course->cou_grade }}</td>
+					<td>{{ $course->cou_start }}{{ " - ".$course->cou_end }}</td>
 					<td>{{ $course->cou_price }}</td>
 					<td class="text-center w-5">{{ $course->num_student }}</td>
 					<td class="w-15">						
-						<button type="button" class="btn btn-primary" onclick="">
+						<button type="button" class="btn btn-primary" onclick="getStudentOfCourse({{ $course->cou_id }});">
 							<i class="icon-eye"></i>
 						</button>
 					
