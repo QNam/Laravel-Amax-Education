@@ -78,7 +78,7 @@ a.editable-click:hover {
     background-image: url(../images/loading.gif);
     position: absolute;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain;
     left: calc((100% - 256px)/2);
     top: calc((100% - 256px)/2);
     height: 256px;
