@@ -14,7 +14,7 @@ class Course extends Model
     public 	  $timestamps	=	true;
     public 	  $incrementing = 	true;
     protected $fillable = [
-        'cou_id', 'cou_name','cou_teacher', 'cou_subject', 'cou_price','cou_desc','cou_class'
+        'cou_id', 'cou_name','cou_teacher', 'cou_subject', 'cou_price','cou_desc','cou_class','cou_start','cou_end','cou_grade','cou_date'
     ];
 
 
