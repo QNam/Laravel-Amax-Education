@@ -184,7 +184,7 @@
 	});
 
 	$('#modalViewCourse').on('hidden.bs.modal', function () {
-		$('#modalViewCourse table tbody').html();
+		$('#modalViewCourse table tbody').html(" ");
 	   viewCourseDataTable.destroy();
 	});
 
