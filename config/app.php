@@ -52,8 +52,8 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://amaxedu.herokuapp.com/'),
-    // 'url' => env('APP_URL', 'http://localhost/amax'),
+    //'url' => env('APP_URL', 'http://amaxedu.herokuapp.com/'),
+    'url' => env('APP_URL', 'http://localhost/amax'),
 
     'asset_url' => env('ASSET_URL', null),
 
