@@ -35,10 +35,12 @@ class DashboardController extends Controller
         foreach ($data['courses'] as $key => $value) 
         {
             $data['courses'][$key]['cou_time'] = json_decode($value['cou_time'],true);
+           
             $value['cou_time'] = json_decode($value['cou_time'],true);
-
+            
             if (count($value['cou_time']) > 0 ) 
             {   
+               
                 foreach ($value['cou_time'] as $k => $v) 
                 {
                     $data['courses'][$key]['cou_time'][$k]['color'] = $this->bgColorList[$i]; 
