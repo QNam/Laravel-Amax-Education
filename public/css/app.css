@@ -4,7 +4,9 @@ a:active
 {
 	text-decoration: none;
 }
-Ư
+thead{
+    border-top: solid 1px #ddd;
+}
 .icon{
 	margin-right: 5px;
 	font-size: inherit;
