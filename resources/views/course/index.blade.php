@@ -12,7 +12,8 @@
 	
 </script>
 @endif
-
+<div class="panel panel-flat">
+<div class="panel-body">
 <div class="control">
 	<a data-toggle="modal" href='#addCourseModal'>
 		<button class="control-item btn btn-primary pull-right" 
@@ -29,6 +30,8 @@
 <div id="dataContent">
 @include('course.data')	
 </div>	
+</div>
+</div>
 
 
 

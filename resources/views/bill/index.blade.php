@@ -13,6 +13,8 @@
 </script>
 @endif
 
+<div class="panel panel-flat">
+<div class="panel-body">
 <div class="control">
 	 
 </div>
@@ -43,7 +45,8 @@
 <div id="dataContent">
 @include('bill.data')	
 </div>
-
+</div>
+</div>
 
 <div class="modal fade" id="payModal">
 	<div class="modal-dialog" style="width: 90vw">

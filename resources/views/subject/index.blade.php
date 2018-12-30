@@ -11,6 +11,8 @@
 	
 </script>
 @endif
+<div class="panel panel-flat">
+<div class="panel-body">
 <div class="control">
 	<a data-toggle="modal" href='#addSubjectModal'>
 		<button class="control-item btn btn-primary pull-right" 
@@ -57,7 +59,8 @@
 		</tbody>
 	</table>
 </div>
-
+</div>
+</div>
 
 
 

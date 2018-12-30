@@ -49,7 +49,7 @@
 
 </head>
 
-<body>
+<body style="background-color: #f5f5f5">
 
 	<!-- Main navbar -->
 	<div class="navbar navbar-inverse navbar-fixed-top">
