@@ -1,14 +1,10 @@
-a:hover,
+Ưa:hover,
 a:link,
 a:active
 {
 	text-decoration: none;
 }
-table tr td,
-table thead th
-{
-	font-size: 13px!important;
-}
+Ư
 .icon{
 	margin-right: 5px;
 	font-size: inherit;
@@ -168,12 +164,25 @@ a.editable-click:hover {
 
 
 thead{
-	border: solid 1px #ccc;
+	border-top: solid 1px #ccc;
 }
 
 
-
+a.fc-day-number{
+    font-weight: bold;
+    color: #333;
+}
 .line-center-text{
 	margin-top: 40px;
 	margin-bottom: 40px;
+}
+
+th.fc-day-header.fc-widget-header {
+    padding: 10px 0px;
+    font-weight: bold;
+    color: #42A5F5;
+}
+
+.fc-day-top{
+    padding-right: 5px; 
 }

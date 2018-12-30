@@ -15,15 +15,15 @@
 	{{-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> --}}
 	<link rel="stylesheet" href="{{ URL::asset('css/bootstrap.min.css') }}">
 
-	<link href="{{ URL::asset('kit/css/core.min.css') }}" rel="stylesheet" type="text/css">
-	<link href="{{ URL::asset('kit/css/components.min.css') }}" rel="stylesheet" type="text/css">
-	<link href="{{ URL::asset('kit/css/colors.min.css') }}" rel="stylesheet" type="text/css">
+	
 	<!-- /global stylesheets -->
 	
 
 	<!-- Core JS files -->
+	{{-- <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script> --}}
 	<script type="text/javascript" src="{{ URL::asset('kit/js/plugins/loaders/pace.min.js') }}"></script>
 	<script type="text/javascript" src="{{ URL::asset('kit/js/core/libraries/jquery.min.js') }}"></script>
+	
     {{-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> --}}
     <script type="text/javascript" src="{{ URL::asset('js/bootstrap.min.js') }}"></script>
 	<!-- /core JS files -->
@@ -33,7 +33,6 @@
 	<link href="{{ URL::asset('css/app.css') }}" rel="stylesheet" type="text/css">
 	<script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
 	<script type="text/javascript" src="{{ URL::asset('js/common.js') }}"></script>
-	@stack('css-file')
 	<!-- /base CSS file -->
 
 	<link href="{{ URL::asset('css/pnotify.custom.min.css') }}" rel="stylesheet" type="text/css">
@@ -43,13 +42,17 @@
 	<script type="text/javascript" src="{{ URL::asset('kit/js/core/app.js') }}"></script>
 
 	<!-- /theme JS files -->
+	@stack('css-file')
+	<link href="{{ URL::asset('kit/css/core.min.css') }}" rel="stylesheet" type="text/css">	
+	<link href="{{ URL::asset('kit/css/colors.min.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ URL::asset('kit/css/components.min.css') }}" rel="stylesheet" type="text/css">
 
 </head>
 
 <body>
 
 	<!-- Main navbar -->
-	<div class="navbar navbar-default header-highlight">
+	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-header">
 			<a class="navbar-brand" href="{{route('index')}}"><img src="{{ URL::asset('images/logo_light.png')}}" alt=""></a>
 
@@ -78,6 +81,15 @@
 						</div>
 	
 						<ul class="media-list dropdown-content-body width-350">
+							<li class="media">
+								<div class="media-left">
+									<a href="#" class="btn border-success text-success btn-flat btn-rounded btn-icon btn-sm"><i class="icon-git-merge"></i></a>
+								</div>
+								
+								<div class="media-body">
+									<a href="#">Quoc Nam,</a> <span class="text-semibold">Tạo Lịch học.</span>
+								</div>
+							</li>
 							<li class="media">
 								<div class="media-left">
 									<a href="#" class="btn border-success text-success btn-flat btn-rounded btn-icon btn-sm"><i class="icon-git-merge"></i></a>
@@ -136,7 +148,7 @@
 		<div class="page-content">
 
 			<!-- Main sidebar -->
-			<div class="sidebar sidebar-main">
+			<div class="sidebar sidebar-main sidebar-fixed">
 				<div class="sidebar-content">
 
 					<!-- User menu -->
@@ -220,7 +232,7 @@
 				</div>
 				<!-- Content area -->
 				
-				<div class="content" id="content">
+				<div class="content" id="content" style="margin-top: 60px;">
 					@if (Session::has('success'))
 					<script>
 						$( window ).load(function() {

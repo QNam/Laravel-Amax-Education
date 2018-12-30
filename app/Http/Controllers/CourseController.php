@@ -19,17 +19,12 @@ class CourseController extends Controller
         'couTeacher.required' => "Vui lòng chọn một giáo viên",
         'couTeacher.numeric' => "Mã giáo viên phải là số !",
         'couGrade.numeric' => "Khối học phải là số !",
-        'couGrade.required' => "Khối học là bắt buộc !",
-        'couStart.required' => "Giờ bắt đầu là bắt buộc !",
-        'couEnd.required' => "Giờ kết thúc học là bắt buộc !"
     ];
 
     public $rules = [
         'couName' => "required",
         'couSubject' => "bail|required|numeric",
-        'couGrade' => "bail|required|numeric",
-        'couStart' => "bail|required",
-        'couEnd' => "bail|required",
+        'couGrade' => "numeric",
         'couTeacher' => "bail|required|numeric",
         'couPrice' => "bail|required|numeric"
     ];
@@ -49,6 +44,7 @@ class CourseController extends Controller
 
           foreach ($data as $key => $value) {
             $value['num_student'] = $course->getTotalStudentOfCourse($value['cou_id']);
+            $value['cou_time']  =   json_decode($value['cou_time'],true);
         }
 
 		return $data;
@@ -109,18 +105,38 @@ class CourseController extends Controller
     {
     	$cou_id = $request->input('couId');
     	$course = new CourseModel();
+        $couTime = $request->input('couTime');
 
+        foreach ($couTime as $key => $value) {
+            if (count($value) < 3 ) 
+            {
+                unset($couTime[$key]);    
+            }
+        }
+
+        $couTimeTemp = [];
+
+        foreach ($couTime as $key => $value) {
+            $couTimeTemp[] = $value;                        
+        }        
+
+        if (json_encode($couTimeTemp) ) {
+            $couTimeTemp = json_encode($couTimeTemp);            
+        } else {
+            $couTimeTemp = [];
+        }
+        
     	$input = [
     		'cou_name' => $request->input('couName'),
     		'cou_teacher' => $request->input('couTeacher'),
     		'cou_subject' => $request->input('couSubject'),
     		'cou_price' => $request->input('couPrice'),
             'cou_desc' => $request->input('couDesc'),
-            'cou_start' => $request->input('couStart'),
-            'cou_end' => $request->input('couEnd'),
-    		'cou_grade' => $request->input('couGrade'),
-
+            'cou_grade' => $request->input('couGrade'),
+            'cou_time' => $couTimeTemp
     	];
+
+
 
         $validator = Validator::make($request->all(), $this->rules, $this->messages);
 

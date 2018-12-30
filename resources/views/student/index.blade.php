@@ -207,7 +207,7 @@ $(document).ready( function () {
 
 	$('.stuName').editable({
 		validate:function(value){
-	        if($.trim(value) === '')
+	        if($.trim(value) == '')
 	        {
 	          return 'Trường này không được bỏ trống !';
 	        }

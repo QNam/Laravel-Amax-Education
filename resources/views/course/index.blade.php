@@ -31,6 +31,8 @@
 </div>	
 
 
+
+
 <div class="modal fade" id="addCourseModal" data-state="">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -76,21 +78,132 @@
 						</div>
 						
 					</div>
+				
+					<label for="" class="text-bold">Thời gian học</label>
+					<div class="row form-group">
+						<div class="col-xs-4">
+							<label for="" class="checkbox-container">
+								<input type="checkbox" name='couTime[0][date]' class="coutime-checkbox" value="0"> Chủ Nhật
+								<span class="checkmark"></span>
+							</label>	
+						</div>
+						<div  class="cou-time" style="display: none;">
+							<div class="col-lg-4">
+								<input type="time" class="form-control"  name="couTime[0][begin]">
+							</div>
 
+							<div class="col-lg-4">
+								<input type="time" name="couTime[0][end]" class="form-control">
+							</div>
+						</div>
+					</div>
 
 					<div class="row form-group">
-						<div class="col-lg-6">
-							<label for="" class="text-bold">Giờ bắt đầu:</label>
-							<input type="time" class="form-control"  name="couStart" required="true" value="{{ old('couStart') }}">
-							{!! $errors->first('couStart', '<label class="error">:message</label>') !!}	
+						<div class="col-xs-4">
+							<label for="" class="checkbox-container">
+								<input type="checkbox" name='couTime[1][date]' class="coutime-checkbox" value="1"> Thứ 2
+								<span class="checkmark"></span>
+							</label>	
 						</div>
+						<div  class="cou-time" style="display: none;">
+							<div class="col-lg-4">
+								<input type="time" class="form-control"  name="couTime[1][begin]">
+							</div>
 
-						<div class="col-lg-6">
-							<label for="" class="text-bold">Giờ kết thúc:</label>
-							<input type="time" name="couEnd" class="form-control" required="true" value="{{ old('couEnd') }}">
-							{!! $errors->first('couEnd', '<label class="error">:message</label>') !!}	
-						</div>						
+							<div class="col-lg-4">
+								<input type="time" name="couTime[1][end]" class="form-control">
+							</div>
+						</div>
 					</div>
+
+					<div class="row form-group">
+						<div class="col-xs-4">
+							<label for="" class="checkbox-container">
+								<input type="checkbox" name='couTime[2][date]' class="coutime-checkbox" value="2"> Thứ 3
+								<span class="checkmark"></span>
+							</label>	
+						</div>
+						<div  class="cou-time" style="display: none;">
+							<div class="col-lg-4">
+								<input type="time" class="form-control"  name="couTime[2][begin]">
+							</div>
+
+							<div class="col-lg-4">
+								<input type="time" name="couTime[2][end]" class="form-control">
+							</div>
+						</div>
+					</div>
+
+					<div class="row form-group">
+						<div class="col-xs-4">
+							<label for="" class="checkbox-container">
+								<input type="checkbox" name='couTime[3][date]' class="coutime-checkbox" value="3"> Thứ 4
+								<span class="checkmark"></span>
+							</label>	
+						</div>
+						<div  class="cou-time" style="display: none;">
+							<div class="col-lg-4">
+								<input type="time" class="form-control"  name="couTime[3][begin]">
+							</div>
+
+							<div class="col-lg-4">
+								<input type="time" name="couTime[3][end]" class="form-control">
+							</div>
+						</div>
+					</div>
+
+					<div class="row form-group">
+						<div class="col-xs-4">
+							<label for="" class="checkbox-container">
+								<input type="checkbox" name='couTime[4][date]' class="coutime-checkbox" value="4"> Thứ 5
+								<span class="checkmark"></span>
+							</label>	
+						</div>
+						<div  class="cou-time" style="display: none;">
+							<div class="col-lg-4">
+								<input type="time" class="form-control"  name="couTime[4][begin]">
+							</div>
+
+							<div class="col-lg-4">
+								<input type="time" name="couTime[4][end]" class="form-control">
+							</div>
+						</div>
+					</div>
+
+					<div class="row form-group">
+						<div class="col-xs-4">
+							<label for="" class="checkbox-container">
+								<input type="checkbox" name='couTime[5][date]' class="coutime-checkbox" value="5"> Thứ 6
+								<span class="checkmark"></span>
+							</label>	
+						</div>
+						<div  class="cou-time" style="display: none;">
+							<div class="col-lg-4">
+								<input type="time" class="form-control"  name="couTime[5][begin]">
+							</div>
+
+							<div class="col-lg-4">
+								<input type="time" name="couTime[5][end]" class="form-control">
+							</div>
+						</div>
+					</div>
+
+					<div class="row form-group">
+						<div class="col-xs-4">
+							<label for=""><input type="checkbox" name='couTime[6][date]' class="coutime-checkbox" value="6"> Thứ 7</label>	
+						</div>
+						<div  class="cou-time" style="display: none;">
+							<div class="col-lg-4">
+								<input type="time" class="form-control"  name="couTime[6][begin]">
+							</div>
+
+							<div class="col-lg-4">
+								<input type="time" name="couTime[6][end]" class="form-control">
+							</div>
+						</div>
+					</div>
+
+
 
 
 					<div class="row form-group">
@@ -104,7 +217,7 @@
 						<div class="col-lg-6">
 							<label for="" class="text-bold">Khối:</label>
 
-							<select name="couGrade" id="" required="true" class="form-control">
+							<select name="couGrade" id="" class="form-control">
 								<option value="">-- Chọn khối --</option>
 								<?php for($i = 1; $i <= 12; $i++) { ?>		
 								<option value="{{$i}}" {{ old('couPrice') == $i ? "select" : "" }}>{{$i}}</option>
@@ -188,6 +301,21 @@
 	   viewCourseDataTable.destroy();
 	});
 
+	$('.coutime-checkbox').change(function(event) {
+
+		if ( $(this).prop('checked') ) {
+			$(this).parent().parent().parent().find('.cou-time').css('display', 'block');	
+		} else {
+			$(this).parent().parent().parent().find('.cou-time').css('display', 'none');	
+		}
+		
+	});
+
+	$('#addCourseModal').on('hidden.bs.modal', function () {
+	    $('.coutime-checkbox').prop('checked',false);
+	    $('.cou-time').css('display','none');
+	})
+
 	
 </script>
 <script>
@@ -204,11 +332,21 @@
     		},
     		success: function(data){
     			console.log('success');
-    			
-
-    			if (data['success']) 
+    			if (data['success'] == true) 
     			{
     				var course = data['data'];
+
+    				if( course['cou_time'] != null && course['cou_time'].length > 0 ) 
+    				{
+    					course['cou_time'].forEach(function(value,index)
+    					{ 
+							$('input[ name="couTime[' + value['date'] + '][date]" ]').prop('checked', true);				    							
+							$('input[ name="couTime[' + value['date'] + '][date]" ]').parent().parent().parent().find('.cou-time').css('display', 'block');	
+
+							$('input[ name="couTime[' + value['date'] + '][begin]" ]').val(value['begin'])
+							$('input[ name="couTime[' + value['date'] + '][end]" ]').val(value['end'])
+    					});
+    				}
 
 	    			$('input[name="couId"]').val(course['cou_id']);
 	    			$('input[name="couName"]').val(course['cou_name']);
@@ -217,8 +355,6 @@
 	    			$('select[name="couClass"]').val(course['cou_class']);
 	    			$('select[name="couGrade"]').val(course['cou_grade']);
 	    			$('input[name="couPrice"]').val(course['cou_price']);
-	    			$('input[name="couStart"]').val(course['cou_start']);
-	    			$('input[name="couEnd"]').val(course['cou_end']);
 	    			$('textarea[name="couDesc"]').val(course['cou_desc']);	
     			} 
     		},
