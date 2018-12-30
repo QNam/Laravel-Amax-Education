@@ -3,7 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+function goBack() {
+    window.history.back();
+}
+function formatPrice(x) {
+    return isNaN(x)?"0 đ":x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")+" đ";
+}
 Number.prototype.formatnum = function(n, x) {
     var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
     return this.toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), '$&.');
@@ -64,6 +69,7 @@ function getResponseText(data) {
   }
 
 }
+
 
 
 function createModel(dom,state,title) 

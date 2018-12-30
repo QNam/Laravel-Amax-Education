@@ -1,3 +1,7 @@
+@php
+    $brc_main ="Môn học";
+	$brc_active = "Danh sách môn học";
+@endphp
 @extends('template.layout')
 
 @section('title',$title)

@@ -1,3 +1,8 @@
+@php
+    $brc_main ="Hóa Đơn";
+	$brc_active = "Danh sách hóa đơn";
+@endphp
+
 @extends('template.layout')
 
 @section('title',$title)

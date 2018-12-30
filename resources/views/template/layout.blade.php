@@ -43,6 +43,7 @@
 
 	<!-- /theme JS files -->
 	@stack('css-file')
+
 	<link href="{{ URL::asset('kit/css/core.min.css') }}" rel="stylesheet" type="text/css">	
 	<link href="{{ URL::asset('kit/css/colors.min.css') }}" rel="stylesheet" type="text/css">
 	<link href="{{ URL::asset('kit/css/components.min.css') }}" rel="stylesheet" type="text/css">
@@ -226,13 +227,12 @@
 
 
 			<!-- Main content -->
-			<div class="content-wrapper">
-				<div class="page-header page-header-default">
-
-				</div>
-				<!-- Content area -->
+			<div class="content-wrapper"  style="padding-top: 54px;">
 				
-				<div class="content" id="content" style="margin-top: 60px;">
+				<!-- Content area -->
+				@include('template.page-header')
+				<div class="content" id="content">
+
 					@if (Session::has('success'))
 					<script>
 						$( window ).load(function() {

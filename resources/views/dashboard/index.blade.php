@@ -1,3 +1,8 @@
+@php
+    $brc_main ="Home";
+	$brc_active = "Dashboard";
+@endphp
+
 @extends('template.layout')
 
 @section('title',$title)
@@ -180,14 +185,14 @@
     
     $('#calendar').fullCalendar({
     	defaultView: 'month',
-    	height: 1050,
+    	
       	header: {
         left: 'prev,next',
         lang: 'vi',
         right: 'month,agendaWeek,agendaDay,listWeek'
       },
       viewRender: function(view) {
-        var title = "<h2 class='text-bold' style='font-size:36px'>Lịch học " + view.title + "</h2>";
+        var title = "<h2 style='font-size: 24px; text-transform: capitalize'>Lịch học " + view.title + "</h2>";
         $("#calendar .fc-center").html(title);
         
       },
@@ -196,7 +201,7 @@
       },
       navLinks: true, // can click day/week names to navigate views
       editable: false,
-      eventLimit: true, // allow "more" link when too many events
+      eventLimit: false, // allow "more" link when too many events
       events: getEventData()
       
     });

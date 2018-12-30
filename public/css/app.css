@@ -149,31 +149,29 @@ a.editable-click:hover {
 
 
 
-.line-center-text{
-	display: block;
-	 width:100%; text-align:center; 
-	 border-bottom: 1px solid #eee; 
-	 line-height:0.1em; 
-	 margin: 20px 0;
-
-}
-.line-center-text span{
-	background:#fff; 
-	padding:10px 20px;
+a.fc-day-grid-event{
+    padding: 8px 5px;
 }
 
-
-thead{
-	border-top: solid 1px #ccc;
+.fc-title{
+    font-weight: 600;
 }
 
-
-a.fc-day-number{
-    font-weight: bold;
-    color: #333;
-}
-.line-center-text{
-	margin-top: 40px;
-	margin-bottom: 40px;
+button.fc-button{
+    background-image: unset;
+    border: 1px solid #ddd;
+    background-color: #fcfcfc;
+    padding: 7px 12px!important;
+    box-shadow: unset; 
 }
 
+button.fc-state-hover{
+    background-color: #eee;
+}
+.fc-icon{
+    line-height: 1!important;
+}
+
+.breadcrumb{
+    background-color: #fcfcfc!important;
+}

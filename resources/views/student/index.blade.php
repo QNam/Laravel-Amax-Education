@@ -1,3 +1,7 @@
+@php
+    $brc_main ="Học sinh";
+	$brc_active = "Danh sách học sinh";
+@endphp
 @extends('template.layout')
 
 @section('title',$title)
