@@ -192,7 +192,7 @@
         right: 'month,agendaWeek,agendaDay,listWeek'
       },
       viewRender: function(view) {
-        var title = "<h2 style='font-size: 24px; text-transform: capitalize'>Lịch học " + view.title + "</h2>";
+        var title = "<h2 style='font-size: 24px; text-transform: uppercase'>Lịch học " + view.title + "</h2>";
         $("#calendar .fc-center").html(title);
         
       },

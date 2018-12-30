@@ -45,8 +45,8 @@
 	@stack('css-file')
 
 	<link href="{{ URL::asset('kit/css/core.min.css') }}" rel="stylesheet" type="text/css">	
-	<link href="{{ URL::asset('kit/css/colors.min.css') }}" rel="stylesheet" type="text/css">
 	<link href="{{ URL::asset('kit/css/components.min.css') }}" rel="stylesheet" type="text/css">
+	<link href="{{ URL::asset('kit/css/colors.min.css') }}" rel="stylesheet" type="text/css">
 
 </head>
 
@@ -149,7 +149,7 @@
 		<div class="page-content">
 
 			<!-- Main sidebar -->
-			<div class="sidebar sidebar-main sidebar-fixed">
+			<div class="sidebar sidebar-main" style="padding-top: 54px;">
 				<div class="sidebar-content">
 
 					<!-- User menu -->
@@ -186,19 +186,19 @@
 								<li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
 								<li><a href="{{route('index')}}"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
 								<li>
-									<a href="#"><i class=" icon-user"></i> <span>Học sinh</span></a>
-									<ul>
+									<a href="#" class="has-ul"><i class=" icon-user"></i> <span>Học sinh</span></a>
+									<ul class="has-ul">
 										<li><a href="{{url('student')}}">Danh sách học sinh</a></li>
 									</ul>
 								</li>
 								<li>
-									<a href="#"><i class="icon-stack2"></i> <span>Giáo viên</span></a>
-									<ul>
+									<a href="#" class="has-ul"><i class="icon-stack2"></i> <span>Giáo viên</span></a>
+									<ul class="has-ul">
 										<li><a href="{{url('teacher')}}">Danh sách giáo viên</a></li>
 									</ul>
 								</li>
 								<li>
-									<a href="#"><i class="icon-book"></i> <span>Lớp học</span></a>
+									<a href="#"><i class=" icon-users"></i> <span>Lớp học</span></a>
 									<ul>
 										<li><a href="{{url('course')}}">Danh sách lớp học</a></li>
 									</ul>

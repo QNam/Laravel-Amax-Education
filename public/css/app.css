@@ -177,3 +177,10 @@ button.fc-state-hover{
 .breadcrumb{
     background-color: #fcfcfc!important;
 }
+td.fc-widget-content,
+td.fc-widget-header {
+    padding: 7px 7px!important;
+}
+.fc-list-heading .fc-widget-header .fc-list-heading-main{
+    text-transform: capitalize!important;
+}
