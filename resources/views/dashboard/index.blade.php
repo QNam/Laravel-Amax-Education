@@ -181,7 +181,6 @@
     
 <script>
 	$(document).ready(function() {
-	
     
     $('#calendar').fullCalendar({
     	defaultView: 'month',
@@ -207,7 +206,7 @@
     });
   }); /*/ready()*/
 
-	
+
 
 	function getEventData()
 	{

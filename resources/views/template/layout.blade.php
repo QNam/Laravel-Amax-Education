@@ -34,7 +34,50 @@
 	<script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
 	<script type="text/javascript" src="{{ URL::asset('js/common.js') }}"></script>
 	<!-- /base CSS file -->
+	<script>
+		$( window ).load(function() { 
+			
+			var state = getCookie('state_slidebar'); 
 
+			if( state != "" && state == 'hide')
+			{
+				
+				$('body').addClass('sidebar-xs');
+				
+			} 
+			if ( state != "" && state == 'show' ) 
+			{
+				
+				$('body').removeClass('sidebar-xs');
+				
+			}  
+
+			if(state == ""){
+				
+				setCookie('state_slidebar','show',365);	
+			}
+		});
+
+		function setStateSlidebar()
+		{
+			var state = getCookie('state_slidebar'); 
+			if( state != "" && state == 'hide')
+			{	
+				setCookie('state_slidebar','show',365);
+			} 
+			if ( state != "" && state == 'show' ) 
+			{
+				
+				setCookie('state_slidebar','hide',365);
+			}  
+
+			if(state == ""){
+				setCookie('state_slidebar','show',365);
+				
+			}
+		}
+			  
+	</script>
 	<link href="{{ URL::asset('css/pnotify.custom.min.css') }}" rel="stylesheet" type="text/css">
 	
 
@@ -50,7 +93,7 @@
 
 </head>
 
-<body style="background-color: #f5f5f5">
+<body style="background-color: #f5f5f5" data-state-slidebar="nam">
 
 	<!-- Main navbar -->
 	<div class="navbar navbar-inverse navbar-fixed-top">
@@ -65,7 +108,7 @@
 
 		<div class="navbar-collapse collapse" id="navbar-mobile">
 			<ul class="nav navbar-nav">
-				<li><a class="sidebar-control sidebar-main-toggle hidden-xs"><i class="icon-paragraph-justify3"></i></a></li>
+				<li><a class="sidebar-control sidebar-main-toggle hidden-xs" onclick="setStateSlidebar()"><i class="icon-paragraph-justify3"></i></a></li>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 						<i class="icon-git-compare"></i>
