@@ -53,7 +53,7 @@ class Bill extends Model
 
         return $dBill::where('bill_id',$bill_id)
                     ->join('course','course.cou_id','detail_bill.cou_id')
-                    ->get(['detail_bill.*','course.*']);
+                    ->get(['detail_bill.*','course.cou_name']);
     }
 
 

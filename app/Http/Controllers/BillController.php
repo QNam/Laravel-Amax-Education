@@ -49,12 +49,23 @@ class BillController extends Controller
         try{
             $data =  $bill->getBillInfo($filter);
 
+            $total = 0;
+
             if ($detail) 
             {
                 foreach ($data as $key => $value) {
                     $value['details'] = $bill->getDetailBill($value['bill_id']);
+                    foreach ($value['details'] as $k => $v) {
+                        $v['couTotal'] = $v['total_lesson'] * $v['cou_price'] * (1 - $v['discount']/100);
+                        $total += $v['couTotal'];
+                    }
+
+                    $value['cousTotal'] = $total; 
                 }
+
+
             }
+
         } catch(\Exception $e){}
 
         return $data;

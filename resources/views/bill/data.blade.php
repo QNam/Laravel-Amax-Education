@@ -22,33 +22,21 @@
 			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill->bill_total}}</td>
 			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill->bill_pay}}</td>
 			<td>
-				<ul class="icons-list pull-left">
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-							<i class="icon-menu9"></i>
-						</a>
-
-						<ul class="dropdown-menu dropdown-menu-right" style="padding: 10px; width: 150px;">
-							<button type="button" class="btn btn-primary" onclick="getDetailBillInfo({{$bill->bill_id}})">
-								<i class="icon-eye"></i>
-							</button>
 						
-							<button type="button" class="btn btn-warning" 
-								onclick="">
-								<i class="icon-pencil3"></i>
-							</button>
-							
+				<button type="button" class="btn btn-warning" 
+					onclick="">
+					<i class="icon-pencil3"></i>
+				</button>
+				
 
-							<form action="{{route('BillDelete')}}" method="POST" style="display: inline;">
-								@csrf
-								<input type="hidden" name="billId" value="{{$bill->bill_id}}">
-								<button type="submit" class="btn btn-danger">
-									<i class="icon-bin"></i>
-								</button>
-							</form>
-						</ul>
-					</li>
-				</ul>
+				<form action="{{route('BillDelete')}}" method="POST" style="display: inline;">
+					@csrf
+					<input type="hidden" name="billId" value="{{$bill->bill_id}}">
+					<button type="submit" class="btn btn-danger">
+						<i class="icon-bin"></i>
+					</button>
+				</form>
+						
 			</td>
 		</tr>
 
@@ -77,23 +65,29 @@
 								</p>
 							</div>
 						</div>
-						<table class="table table-bordered">
+						<table class="table table-bordered vDataCourse">
 							<thead>
 								<th class="text-bold">Khóa học</th>
 								<th class="text-bold">Giá tiền</th>
 								<th class="text-bold">Tổng số buổi</th>
 								<th class="text-bold">Khuyến mãi</th>
+								<th class="text-bold">Tổng tiền</th>
 							</thead>	
 						
 						<tbody>
 							@foreach($bill->details as $detail)
-							<tr>
+							<tr class="vCou-{{$detail->cou_id}} detail-bill-item">
 								<td>{{$detail->cou_name}}</td>
-								<td>{{$detail->cou_price}}</td>
-								<td class="w-5">{{$detail->total_lesson}}</td>
-								<td>{{$detail->discount}}</td>
+								<td class="vCouPrice">{{$detail->cou_price}}</td>
+								<td class="w-5 vTotalLesson">{{$detail->total_lesson}}</td>
+								<td class="vCouDiscount">{{$detail->discount}}</td>
+								<td class="vCouTotal">{{$detail->couTotal}}</td>
 							</tr>
 							@endforeach
+							<tr>
+								<td colspan="4" class="text-bold">Tổng tiền: </td>
+								<td class="text-bold cousTotal">{{$bill->cousTotal}}</td>
+							</tr>
 						</tbody>
 						</table>
 					</div>
@@ -101,12 +95,44 @@
 
 			</td>
 		</tr>
+
 		@endforeach
 	</tbody>
 </table>
 <script>
-	 function openDiv(id){
+	function openDiv(id){
 	    $("#detail-bill-"+id).toggle();
+	    vCreateTotalOfCourse(id);
     }
+	
+	function vCreateTotalOfCourse(id)
+	{
+		var total = 0;
+
+		console.log($("#detail-bill-" + id + '.vDataCourse .detail-bill-item .vCouTotal')[0]);
+
+		$("#detail-bill-" + id + '.vDataCourse .vCouTotal').each(function(index, el) {
+			console.log($(this));
+			total += Number( $(el).text() ); 	
+		});
+
+		console.log(total);
+
+
+		$("#detail-bill-" + id +'.vDataCourse .cousTotal').text(total.formatnum() );
+
+		return total;	
+	}    
+
+    // function caclTotalOfCourse(totalLesson, couPrice, discount)
+    // {
+    // 	totalLesson = Number(totalLesson);
+    // 	couPrice = Number(couPrice);
+    // 	discount = Number(discount);
+
+    // 	var total = (totalLesson * couPrice); 
+    // 	if (discount > 0 || discount == 100) var total = (totalLesson * couPrice * (1 - discount/100) ); 
+    // 	return total;
+    // }
 
 </script>
