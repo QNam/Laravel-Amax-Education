@@ -12,7 +12,7 @@
 	<tbody id="listBillData">
 		@foreach($bills as $bill)
 
-		<tr class="cursor-pointer" id="bill-{{$bill->bill_id}}"  >
+		<tr class="cursor-pointer" id="bill-{{$bill->bill_id}}" data-popup="tooltip" title="Click để biết thông tin chi tiết" >
 			<td onclick="openDiv({{$bill->bill_id}})"  class="text-center 
 				{!! ($bill->new_debt > 0) ? 'text-primary' : ""  !!} {!! ($bill->new_debt < 0) ? 'text-danger': ""  !!} {!! ($bill->new_debt == 0) ? 'text-success': ""  !!}
 			">{{$bill->bill_id}}</td>
@@ -46,6 +46,11 @@
 				<div class="panel panel-white">
 					<div class="panel-heading">
 						<h4><i class="icon-list"></i>  Thông tin hóa đơn</h4>
+						<div class="heading-elements">
+							<ul class="icons-list">
+		                		<li><a data-popup="tooltip" title="Close" onclick="openDiv({{$bill->bill_id}})"><i class="icon-cross"></i></a></li>
+		                	</ul>
+	                	</div>
 					</div>
 					
 					<div class="panel-body">
@@ -55,13 +60,13 @@
 								<p><span class="text-bold">Đóng học tháng: </span>{{$bill->month}}</p>
 								<p><span class="text-bold">Ngày lập: </span>{{$bill->created_at}}</p>
 							</div>
-							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"
 								<p><span class="text-bold">Thừa/thiếu trước đó: </span>{{$bill->old_debt}}</p>
 								<p><span class="text-bold">Khuyến mãi: </span>{{ $bill->bill_discount }} %</p>
 								<p><span class="text-bold">Tổng tiền: </span>{{$bill->bill_total}}</p>								
 								<p><span class="text-bold">Thực thu: </span>	{{$bill->bill_pay}}</p>
 								<p><span class="text-bold">Trả lại: </span>	
-									{{ ($bill->isExcess == "" || $bill->isExcess == "0") ? "Không" : "Có" }}
+									{{ ($bill->isExcess == "0") ? $bill->bill_pay - $bill->bill_total : "Không" }}
 								</p>
 							</div>
 						</div>
@@ -105,34 +110,5 @@
 	    vCreateTotalOfCourse(id);
     }
 	
-	function vCreateTotalOfCourse(id)
-	{
-		var total = 0;
-
-		console.log($("#detail-bill-" + id + '.vDataCourse .detail-bill-item .vCouTotal')[0]);
-
-		$("#detail-bill-" + id + '.vDataCourse .vCouTotal').each(function(index, el) {
-			console.log($(this));
-			total += Number( $(el).text() ); 	
-		});
-
-		console.log(total);
-
-
-		$("#detail-bill-" + id +'.vDataCourse .cousTotal').text(total.formatnum() );
-
-		return total;	
-	}    
-
-    // function caclTotalOfCourse(totalLesson, couPrice, discount)
-    // {
-    // 	totalLesson = Number(totalLesson);
-    // 	couPrice = Number(couPrice);
-    // 	discount = Number(discount);
-
-    // 	var total = (totalLesson * couPrice); 
-    // 	if (discount > 0 || discount == 100) var total = (totalLesson * couPrice * (1 - discount/100) ); 
-    // 	return total;
-    // }
 
 </script>

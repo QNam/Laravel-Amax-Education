@@ -44,6 +44,7 @@ class Bill extends Model
 
         return $bill::where($filter)
                     ->join('student','student.stu_id','bill.stu_id')
+                    ->orderBy('created_at', 'DESC')
                     ->get(['bill.*','student.stu_id','student.stu_wallet','student.stu_name']);
     }
 

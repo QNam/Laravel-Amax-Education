@@ -49,11 +49,12 @@ class BillController extends Controller
         try{
             $data =  $bill->getBillInfo($filter);
 
-            $total = 0;
 
             if ($detail) 
             {
                 foreach ($data as $key => $value) {
+                    $total = 0;
+
                     $value['details'] = $bill->getDetailBill($value['bill_id']);
                     foreach ($value['details'] as $k => $v) {
                         $v['couTotal'] = $v['total_lesson'] * $v['cou_price'] * (1 - $v['discount']/100);
@@ -132,9 +133,14 @@ class BillController extends Controller
         $stuId     =  $request->input('stuId');
         $isExcess  =  $request->input('isExcess');
 
+        if ($isExcess != "1") {
+            $isExcess = "0";
+        }
+
         $bTotal  = 0;
     	$bWallet = 0;
         
+        // dd($isExcess);
         // $billId     =  $request->input('billId');
 
         // validate
@@ -150,10 +156,12 @@ class BillController extends Controller
 
             $checker = $bill->courseIsTraded($stuId,$bMonth,$value['couId']);
 
-            if (!$checker) {
+
+            if ($checker) {
                 $cou_duplicate[] =  $value['couId'];
             }
         }
+
 
         if (count($cou_duplicate) > 0) {
             return response()->json(['data'=>[ 'couDuplicate'=> $cou_duplicate], 'validate'=>false]);
