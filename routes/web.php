@@ -43,4 +43,5 @@ Route::post('/subject/get', 'SubjectController@getSubjectInfo')->name('SubjectGe
 Route::post('/bill/save', 'BillController@store')->name('BillStore');
 Route::get('/bill/index', 'BillController@index')->name('BillIndex');
 Route::post('/bill/get', 'BillController@getBillInfo')->name('BillGetOne');
+Route::post('/bill/delete', 'BillController@deleteBill')->name('BillDelete');
 

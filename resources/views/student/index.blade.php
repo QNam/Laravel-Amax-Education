@@ -209,8 +209,28 @@
 @push('js-code')
 	
 <script>
+var studentDataTable;
+
+function setStudentDataTable()
+{
+	studentDataTable = $('#listStudent').DataTable({
+		searching: false,
+		lengthChange: false,
+		language: {
+	      emptyTable: "<h3>Không tìm thấy dữ liệu !</h3>"
+	    }
+	});
+
+	$('.td-wallet p').each(function(index, el) {
+		var toCash = Number($(el).text()).formatnum();
+		$(el).text(toCash);
+		
+	});
+}
+
 
 $(document).ready( function () {
+	setStudentDataTable();	
 
 	$('.stuName').editable({
 		validate:function(value){
@@ -288,23 +308,7 @@ $(document).ready( function () {
         
     });  
 
-	var studentDataTable;
-	$(document).ready( function () {
-	    studentDataTable = $('#listStudent').DataTable({
-	    	searching: false,
-	    	lengthChange: false,
-	    	language: {
-		      emptyTable: "<h3>Không tìm thấy dữ liệu !</h3>"
-		    }
-	    });
-
-	    $('.td-wallet p').each(function(index, el) {
-	    	var toCash = Number($(el).text()).formatnum();
-	    	$(el).text(toCash);
-	    	
-	    });
-	});
-
+	
 	
 	$.fn.editable.defaults.mode = 'poppup';
 
@@ -364,14 +368,24 @@ $(document).ready( function () {
 		    				if (typeof error['billMonth'] !== 'undefined')  $('.valid_err_billMonth').text(error['billMonth'][0]);
 		    				if (typeof error['billDiscount'] !== 'undefined')  $('.valid_err_billDiscount').text(error['billDiscount'][0]);
 		    				if (typeof error['billPay'] !== 'undefined')  $('.valid_err_billPay').text(error['billPay'][0]);
+		    				if (typeof error['couDuplicate'] !== 'undefined'){
+		    					error['couDuplicate'].forEach(function(value,index){
+		    						var html = '<p class="validation-error-label valid_err_billPay">Lớp này đã đóng tiền học tháng '
+		    							+$('select[name=billMonth]').val()
+		    						+'</p>' 
+		    						$('#pCou-'+value+' .payCouName').append(html);
+		    					});
+
+		    				}
 
 		    				return false;
-		    				
 		    			}
+
 
 		    			if (data['success'] == true) 
 		    			{
 		    				var html = "";
+
 		    				if( data['data']['stu_wallet'] < 0 ) 
 		    					html = '<p title="Nợ" style="width:70%; font-weight:bold" class="label label-wallet border-left-danger label-striped">'
 		    							+Number(data['data']['stu_wallet'] * - 1).formatnum() +'</p>' 
@@ -386,6 +400,7 @@ $(document).ready( function () {
 
 
 		    				hideOverLoading('#payModal .modal-dialog');
+
 		    				$('#payModal').modal('hide');
 		    				$('#stu-' + data['data']['stu_id'] + ' .td-wallet').html(html);
 		    				showNotify("",data['msg'],'bg-success');							
@@ -426,7 +441,9 @@ $(document).ready( function () {
 	    			stuWallet: wallet
 	    		},
 	    		success: function(data){
+	    			studentDataTable.destroy();
 	    			$('#listStudent tbody').html(data);
+	    			setStudentDataTable();
 	    			hideOverLoading('#dataContent');
 	    		},
 	    		error:function() {

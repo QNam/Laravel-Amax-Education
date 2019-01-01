@@ -21,6 +21,23 @@ class Bill extends Model
         return $this->hasMany('App\Model\DetailBill','bill_id','detail_bill_id');
     }
 
+
+    public function courseIsTraded($stuId,$month,$couId)
+    {
+        $bill = new Bill();
+
+        $counterBill = $bill::where(['stu_id' => $stuId, 'month' => $month])->count();
+
+        if($counterBill == 0) return false;
+        
+
+        $counter = $bill::where(['stu_id' => $stuId, 'month' => $month, 'detail_bill.cou_id' => $couId])
+                    ->join('detail_bill','detail_bill.bill_id','bill.bill_id')
+                    ->count();
+        if($counter > 0) return true;
+        return false;
+    }
+    
     public function getBillInfo($filter = [])
     {
         $bill = new Bill();

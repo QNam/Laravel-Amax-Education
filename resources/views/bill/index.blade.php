@@ -20,9 +20,12 @@
 
 <div class="panel panel-flat">
 <div class="panel-body">
-<div class="control">
-	 
+<div class="control pull-right">
+	 <div style="display: inline; margin-right: 10px"><button class="btn btn-danger"></button> Hóa đơn nợ</div>
+	 <div style="display: inline; margin-right: 10px"><button class="btn btn-success"></button> Hóa đơn không nợ</div>
+	 <div style="display: inline; margin-right: 10px"><button class="btn btn-primary"></button> Hóa đơn thừa</div>
 </div>
+<div style="clear: both;"></div>
 
 <div class="filter clearfix">
 	<div action="" class="form-inline pull-right">
@@ -54,7 +57,7 @@
 </div>
 
 <div class="modal fade" id="payModal">
-	<div class="modal-dialog" style="width: 90vw">
+	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -76,15 +79,6 @@
 						<p class="bUpdated"></p>
 					</div>
 
-				</div>
-
-				<div class="row" style="margin-top: 20px;">
-					<form action="{{route('BillStore')}}" method="POST" id="payForm">
-						@include('student.bill-form')	
-						<div class="clearfix">
-							<button type="submit" class="btn btn-primary pull-right" onclick="updateBill()">Cập nhật</button>
-						</div>
-					</form>
 				</div>
 			</div>
 		

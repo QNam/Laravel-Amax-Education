@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Validator;
 
 use App\Model\Course as CourseModel;
@@ -64,9 +65,9 @@ class BillController extends Controller
         $data = [];
         $data['title'] = 'Danh sách hóa đơn';
 
-        $data['bills'] = $this->_getDocData();
+        $data['bills'] = $this->_getDocData([],true);
 
-        //dd($data['bills']);   
+        // dd($data['bills']);   
         return view('bill/index')->with($data);
     }
 
@@ -83,7 +84,26 @@ class BillController extends Controller
         }
 
         return response()->json(['msg'=>'Thành công !', 'success'=>true, 'data' => $data]);
-        
+    }
+
+    public function deleteBill(Request $request)
+    {
+        $billId = $request->input('billId');
+        $bill = new BillModel();
+        $dBill = new DetailBillModel();
+
+        try{
+            $dBill::where('bill_id',$billId)->delete();
+            $bill::where('bill_id',$billId)->delete();
+
+            Session::flash('success', 'Xóa hóa đơn thành công !'); 
+            return redirect()->route('BillIndex');   
+        } catch(\Exception $e) {
+            
+            Session::flash('error', 'Xóa hóa đơn thất bại !'); 
+            return redirect()->route('BillIndex'); 
+
+        }
     }
 
 
@@ -104,16 +124,31 @@ class BillController extends Controller
         $bTotal  = 0;
     	$bWallet = 0;
         
-        $billId     =  $request->input('billId');
+        // $billId     =  $request->input('billId');
 
         // validate
         $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
-
         if ( $validator->fails() ) {
-             return response()->json(['data'=>$validator->errors(), 'validate'=>false]);
+             return response()->json(['data'=>$err_validate, 'validate'=>false]);
         }
 
+
+        $cou_duplicate = [];
+        foreach ($bCourses as $key => $value) {
+
+            $checker = $bill->courseIsTraded($stuId,$bMonth,$value['couId']);
+
+            if (!$checker) {
+                $cou_duplicate[] =  $value['couId'];
+            }
+        }
+
+        if (count($cou_duplicate) > 0) {
+            return response()->json(['data'=>[ 'couDuplicate'=> $cou_duplicate], 'validate'=>false]);
+        }
+
+        
 
     	try{
 
@@ -124,12 +159,6 @@ class BillController extends Controller
     		foreach ($bCourses as $key => $value) 
     		{
     			$bCourses[$key]['cou_price'] = $course::where('cou_id',$value['couId'])->get(['cou_price'])[0]['cou_price'];
-
-                if ( isset($billId) ) {
-                    $bCourses[$key]['cou_price'] = $detailBill::where(['bill_id'=>$billId, 'cou_id'=>$value['couId'] ])
-                                                                ->get(['cou_price'])[0]['cou_price'];                  
-                }
-    			
 
     			if ( empty($value['couDiscount']) ) 
     			{
@@ -177,10 +206,6 @@ class BillController extends Controller
             
             $student::where('stu_id',$stuId)->update(['stu_wallet'=> $bWallet]);
 
-            if ( isset($billId) ) {
-                $bill = $bill::find($billId);                
-            }
-
             $bill->bill_discount =  $bDiscount;
             $bill->bill_total    =  $bTotal;
             $bill->bill_pay      =  $bPay;
@@ -203,25 +228,6 @@ class BillController extends Controller
         try{
             
             \DB::beginTransaction();
-
-            if ( isset($billId) ) {
-                 foreach ($bCourses as $key => $value) {
-                    
-                    $detailBill = new DetailBillModel();
-
-                    $data = [
-                        'total_lesson'  => $bCourses[$key]['totalLesson'],
-                        'discount'      => $bCourses[$key]['couDiscount'],
-                    ];
-
-
-                    $detailBill::where(['cou_id' => $bCourses[$key]['couId'],
-                                        'bill_id' => $bill->bill_id ])->update($data);
-                     \DB::commit();
-
-                    return response()->json(['msg'=>'Cập nhật hóa đơn thành công !', 'success'=>true,'data'=>['stu_id' => $stuId, 'stu_wallet'=> $bWallet] ]);
-                }
-            }
 
             foreach ($bCourses as $key => $value) {
                 $data = [

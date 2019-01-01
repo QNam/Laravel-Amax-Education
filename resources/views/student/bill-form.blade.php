@@ -143,19 +143,19 @@
 @push('js-code')
 <script>
 	
-	$('#payModal').on('hidden.bs.modal', function () {
-	    $('#payModal input').val("");
-	    $('#payModal select').val("");
-	    $('#payModal textarea').text("");
+$('#payModal').on('hidden.bs.modal', function () {
+    $('#payModal input').val("");
+    $('#payModal select').val("");
+    $('#payModal textarea').text("");
 
-	    $('#payModal #alertNotify').html('');
+    $('#payModal #alertNotify').html('');
 
-	    $('#payModal #walletNotify').css('display', 'none');
-	    $('#payModal #walletNotify input[name=isExcess]').prop('checked', false);
-	    
-	    $('#payModal #payCourseInfo tr').remove();
-	    $('#payModal .validation-error-label').text("");
-	})
+    $('#payModal #walletNotify').css('display', 'none');
+    $('#payModal #walletNotify input[name=isExcess]').prop('checked', false);
+    
+    $('#payModal #payCourseInfo tr').remove();
+    $('#payModal .validation-error-label').text("");
+})
 
 $('#payModal').on('show.bs.modal', function () {
     var d = new Date();
@@ -166,13 +166,16 @@ $('#payModal').on('show.bs.modal', function () {
     $('select[name=billMonth] option:eq('+ Number(month + 1)  +')').prop('selected', true);
 
 })
+
+
+
+
 </script>
 <script>
 	//-----------------------------------------------------------------------------------------------------------------------------------------	   
 //Các hàm liên quan đến Tạo HTML
 //-----------------------------------------------------------------------------------------------------------------------------------------		     
 
-  		
 
 	    function getCourseToPay()
 	    {
