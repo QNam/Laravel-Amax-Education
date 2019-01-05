@@ -4,7 +4,7 @@
 
 		@foreach ($students as $key => $student)
 				
-			<tr id="stu-{{ $student->stu_id }}">
+			<tr id="stu-{{ $student->stu_id }}" class="cursor-pointer">
 				<td class="text-center w-5 stu-render-1"><?=++$i ?></td>
 				<td class="stu-render-1">
 					<a href="javascript:void(0)" class="stuName" 
@@ -30,7 +30,7 @@
 								<i class="icon-menu9"></i>
 							</a>
 
-							<ul class="dropdown-menu dropdown-menu-right" style="padding: 10px; width: 220px;">
+							<ul class="dropdown-menu dropdown-menu-right" style="padding: 10px; width: 170px;">
 								<button type="button" class="btn btn-warning" 
 									onclick="getStudentInfo({{$student->stu_id}}); createModel('#addStudentModal','update','Cập nhật học sinh');">
 									<i class="icon-pencil3"></i>
@@ -50,10 +50,6 @@
 				
 			</tr>
 
-
 		@endforeach
 
-<script>
-
-</script>
 	

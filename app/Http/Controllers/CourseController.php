@@ -79,6 +79,24 @@ class CourseController extends Controller
     	$data['subjects'] = $subject::get(['sub_id','sub_name']);
     	$data['teachers'] = $teacher::get(['tea_id','tea_name']);
 
+        // $courseList = &$data['courses'];
+        // foreach ($data['courses'] as &$value) {
+
+        //     foreach ($value['cou_time'] as &$v) 
+        //     {   
+        //         $v['date'] = ($v['date'] == 0) ? "Chủ Nhật" : (int)$v['date'] + 1;    
+        //     }
+        // }
+        // $num_course = count($data['courses']);
+        // for ($i=0; $i < $num_course; $i++) { 
+        //     $num_time = count( $data['courses'][$i]['cou_time'] );
+        //     var_dump($num_time);
+        //     for ($j=0; $j < $num_time; $j++) { 
+        //         $data['courses'][$i]['cou_time'][$j]['date'] = ($data['courses'][$i]['cou_time'][$j]['date'] == 0) ? "Chủ Nhật" : (int)$data['courses'][$i]['cou_time'][$j]['date'] + 1;
+        //     }
+        // }
+        // dd($data['courses']);
+
     	return view('course/index')->with($data);
     }
 

@@ -6,6 +6,7 @@
 		<th class="text-bold">Ngày lập</th>
 		<th class="text-bold">Tháng</th>
 		<th class="text-bold">Tổng tiền</th>
+		<th class="text-bold">Khuyến mãi</th>
 		<th class="text-bold">Thanh toán</th>
 		<th></th>
 	</thead>
@@ -20,6 +21,7 @@
 			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill->created_at}}</td>
 			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill->month}}</td>
 			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill->bill_total}}</td>
+			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill->bill_discount}} %</td>
 			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill->bill_pay}}</td>
 			<td>
 						
@@ -41,14 +43,14 @@
 		</tr>
 
 		<tr class="" id="detail-bill-{{$bill->bill_id}}" style="display: none;">
-			<td colspan="7" style="padding: 30px 5px; background-color: #eee">
+			<td colspan="8" style="padding: 30px 5px; background-color: #eee">
 				
 				<div class="panel panel-white">
 					<div class="panel-heading">
 						<h4><i class="icon-list"></i>  Thông tin hóa đơn</h4>
 						<div class="heading-elements">
 							<ul class="icons-list">
-		                		<li><a data-popup="tooltip" title="Close" onclick="openDiv({{$bill->bill_id}})"><i class="icon-cross"></i></a></li>
+		                		<li><a data-toggle="tooltip" title="Close" onclick="openDiv({{$bill->bill_id}})"><i class="icon-cross"></i></a></li>
 		                	</ul>
 	                	</div>
 					</div>

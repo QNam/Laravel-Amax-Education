@@ -52,9 +52,10 @@ class Course extends Model
 
         return $course::join('register','register.cou_id','course.cou_id')
                         ->join('student','student.stu_id','register.stu_id')
-                        ->select('course.*')
+                        ->join('teacher','course.cou_teacher','teacher.tea_id')
+                        ->join('subject','course.cou_subject','subject.sub_id')
                         ->where('student.stu_id', $stu_id)
-                        ->get();
+                        ->get(['course.*','tea_name','sub_name']);
 
     }
 

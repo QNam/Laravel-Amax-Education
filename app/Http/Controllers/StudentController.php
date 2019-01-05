@@ -39,6 +39,7 @@ class StudentController extends Controller
     {
         $student   =  new StudentModel();
         $course     =  new CourseModel();
+        $bill     =  new BillModel();
         $data      = array();
         
         foreach ($filter as $key => $value) 
@@ -56,8 +57,14 @@ class StudentController extends Controller
                 foreach ($data as $key => $value) {
                     $value['courses'] = $course->getCourseOfStudent($value['stu_id']);
                 }
+
+                foreach ($data as $key => $value) {
+                    $value['bills'] = $bill->getBillOfStudent($value['stu_id']);
+                }
             }
-        } catch(\Exception $e){}
+        } catch(\Exception $e){
+            throw $e;
+        }
 
         return $data;
     }
@@ -68,12 +75,14 @@ class StudentController extends Controller
         $student = new StudentModel();
         $course  = new CourseModel();
 
-        //$data['students'] = $this->_getDocData();
-        $data['students'] = $student::get();
+        $data['students'] = $this->_getDocData([]);
+        
         $data['courses'] = $course::get(['cou_id','cou_name']);
 
         $data['title'] = 'Danh sách học sinh';
-            
+        
+        // dd($data['students']);
+
         return view('student/index')->with($data);
     }
 

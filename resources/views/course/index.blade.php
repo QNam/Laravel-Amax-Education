@@ -298,13 +298,29 @@
 @push('js-code')
 <script>
 	var viewCourseDataTable;
+
+	function setViewCourseDT()
+	{
+		viewCourseDataTable = $('#viewCourseData').DataTable({
+			language: {
+		      emptyTable: "<h3>Không tìm thấy dữ liệu !</h3>"
+		    }
+		});
+
+	    $('.td-wallet p').each(function(index, el) {
+	    	var toCash = Number($(el).text()).formatnum();
+	    	$(el).text(toCash);
+	    	
+	    });
+	}
+
 	$(document).ready( function () {
 
 
 	});
 
 	$('#modalViewCourse').on('hidden.bs.modal', function () {
-		$('#modalViewCourse table tbody').html(" ");
+		// $('#modalViewCourse table tbody').html(" ");
 	   viewCourseDataTable.destroy();
 	});
 
@@ -386,18 +402,8 @@
     		success: function(data){
     			$('#viewCourseData tbody').html(data);
     			$('#viewCourseData tbody .stu-render-8').remove();
+    			setViewCourseDT();
 
-    			viewCourseDataTable = $('#viewCourseData').DataTable({
-					language: {
-				      emptyTable: "<h3>Không tìm thấy dữ liệu !</h3>"
-				    }
-				});
-
-			    $('.td-wallet p').each(function(index, el) {
-			    	var toCash = Number($(el).text()).formatnum();
-			    	$(el).text(toCash);
-			    	
-			    });
     			hideOverLoading('#modalViewCourse .modal-dialog');
     		},
     		error:function() {

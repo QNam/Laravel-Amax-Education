@@ -21,6 +21,20 @@ class Bill extends Model
         return $this->hasMany('App\Model\DetailBill','bill_id','detail_bill_id');
     }
 
+    public function getBillOfStudent($stuId)
+    {
+        $bill = new Bill();
+
+        $listBill = $bill::where(['bill.stu_id' => $stuId])
+                    ->get();
+
+        foreach ($listBill as $key => $value) {
+            $value['details'] = $bill->getDetailBill($value['bill_id']);
+        }
+
+        return $listBill;
+
+    }
 
     public function courseIsTraded($stuId,$month,$couId)
     {

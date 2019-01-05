@@ -18,7 +18,11 @@
 					<td>{{ $course->cou_name }}</td>
 					<td>{{ $course->tea_name }}</td>
 					<td class="w-5">{{ $course->sub_name }} {{ " - ".$course->cou_grade }}</td>
-					<td>{{ $course->cou_start }}{{ " - ".$course->cou_end }}</td>
+					<td>
+						@foreach($course['cou_time'] as $couTime)
+							<p>{{ $couTime['date']}}, Từ {{$couTime['begin']}} đến {{$couTime['end']}}</p>
+						@endforeach
+					</td>
 					<td>{{ $course->cou_price }}</td>
 					<td class="text-center w-5">{{ $course->num_student }}</td>
 					<td class="w-15">						
@@ -36,11 +40,7 @@
 							<i class="icon-bin"></i>
 						</button>
 					</td>
-
-					
 				</tr>
-
-
 			@endforeach
 		</tbody>
 	</table>

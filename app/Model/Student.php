@@ -26,11 +26,9 @@ class Student extends Model
 
         return $student::join('register','student.stu_id','register.stu_id')
                         ->join('course','course.cou_id','register.cou_id')
-                        ->join('teacher','teacher.tea_id','course.cou_teacher')
-                        ->join('subject','subject.sub_id','course.cou_subject')
                         ->where($filter)
                         ->groupBy('student.stu_id')
-                        ->select('student.*')
-                        ->get();
+                        ->orderBy('updated_at','DESC')
+                        ->get(['student.*']);
     }
 }
