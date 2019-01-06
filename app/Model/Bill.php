@@ -26,10 +26,20 @@ class Bill extends Model
         $bill = new Bill();
 
         $listBill = $bill::where(['bill.stu_id' => $stuId])
-                    ->get();
+                    ->join('student','student.stu_id','bill.stu_id')
+                    ->get(['bill.*','student.stu_name']);
 
         foreach ($listBill as $key => $value) {
             $value['details'] = $bill->getDetailBill($value['bill_id']);
+
+            foreach ($value['details'] as $k => $v) 
+            {
+                $total = 0;
+                $v['couTotal'] = $v['total_lesson'] * $v['cou_price'] * (1 - $v['discount']/100);
+                $total += $v['couTotal'];
+
+            }
+            $value['cousTotal'] = $total;
         }
 
         return $listBill;

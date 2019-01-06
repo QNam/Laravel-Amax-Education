@@ -188,7 +188,25 @@
 		</div>
 	</div>
 </div>
+
+
+<div class="modal fade" id="detailStudentInfoModal">
+	<div class="modal-dialog" style="width: 70vw;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Thông tin học sinh</h4>
+			</div>
+			<div class="modal-body">
+
+			</div>
+		</div>
+	</div>
+</div>
 @endsection
+
+
+
 
 
 {{-- 
@@ -328,6 +346,46 @@ $(document).ready( function () {
 //-----------------------------------------------------------------------------------------------------------------------------------------	   
 //Các hàm liên quan đến thao tác CSDL
 //-----------------------------------------------------------------------------------------------------------------------------------------	   
+	  function getDetailStudentInfo(id)
+	  {
+
+	  		showLargeLoading('#detailStudentInfoModal .modal-dialog');
+	    	$('#detailStudentInfoModal').modal('show');
+	    	$.ajax({
+	    		url: "{{route('StudentGetOne')}}",
+	    		method: 'POST',
+	    		data: {
+	    			stu_id: id,
+	    			detail: true
+	    		},
+	    		success: function(data)
+	    		{
+	    			if (data['success'] == true) 
+	    			{
+						$('#detailStudentInfoModal .modal-body').html(data['data']) 	    				
+	    				console.log(data);
+
+					    $('#detailStudentInfoModal').modal('show');
+					    hideOverLoading('#detailStudentInfoModal .modal-dialog'); 
+					    
+	    			} else {
+	    				showNotify("",'Lấy dữ liệu thất bại','bg-danger');
+	    				hideOverLoading('#detailStudentInfoModal .modal-dialog');	
+	    				$('#detailStudentInfoModal').modal('hide');
+	    			}
+
+	    		},
+	    		error:function() 
+	    		{
+	    			console.log('fail');
+	    			showNotify("",'Lấy dữ liệu thất bại !','bg-danger');
+	    			hideOverLoading('#detailStudentInfoModal .modal-dialog');
+	    			$('#detailStudentInfoModal').modal('hide');
+	    		}
+	    	});
+
+	  }
+
 	  function createBill()
 	    {
 	    	/*Lỗi: đẩy lên server thành công (stt 200) nhưng vẫn đả về error

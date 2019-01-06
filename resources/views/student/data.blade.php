@@ -30,7 +30,10 @@
 								<i class="icon-menu9"></i>
 							</a>
 
-							<ul class="dropdown-menu dropdown-menu-right" style="padding: 10px; width: 170px;">
+							<ul class="dropdown-menu dropdown-menu-right" style="padding: 10px; width: 220px;">
+								<button type="button" class="btn btn-primary" onclick="getDetailStudentInfo({{ $student->stu_id }});">
+									<i class="icon-eye"></i>
+								</button>
 								<button type="button" class="btn btn-warning" 
 									onclick="getStudentInfo({{$student->stu_id}}); createModel('#addStudentModal','update','Cập nhật học sinh');">
 									<i class="icon-pencil3"></i>

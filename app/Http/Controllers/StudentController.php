@@ -117,7 +117,7 @@ class StudentController extends Controller
         
         $data['students'] = $this->_getDocData($filter);
         
-        $html = view('student/data')->with($data)->render();        
+        // $html = view('student/data')->with($data)->render();        
 
 
         return view('student/data')->with($data);
@@ -128,8 +128,9 @@ class StudentController extends Controller
     public function getStudentInfo(Request $request)
     {   
         $id = $request->input('stu_id');
-        $couId = $request->input('couId');
-        $filter = ['student.stu_id' => $id, 'course.cou_id' => $couId];
+        $detail = $request->input('detail');
+        // $couId = $request->input('couId');
+        $filter = ['student.stu_id' => $id/*, 'course.cou_id' => $couId*/];
 
 
         $data =  $this->_getDocData($filter,true);
@@ -138,6 +139,13 @@ class StudentController extends Controller
             return response()->json(['msg'=>'Không tìm thấy thông tin học sinh !', 'success'=>false]);
         }
 
+        if ($detail) 
+        {
+            // dd($data);
+            $html = view('student/detail-info')->with('student',$data[0])->render();  
+
+            return response()->json(['msg'=>'Thành công !', 'success'=>true, 'data' => $html]);
+        }
         return response()->json(['msg'=>'Thành công !', 'success'=>true, 'data' => $data]);
         
     }
