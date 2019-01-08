@@ -131,7 +131,6 @@
 <script>
 	function openDiv(id){
 	    $("#detail-bill-"+id).toggle();
-	    vCreateTotalOfCourse(id);
     }
 	
 

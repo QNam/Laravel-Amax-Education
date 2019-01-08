@@ -146,6 +146,7 @@ class StudentController extends Controller
 
             return response()->json(['msg'=>'Thành công !', 'success'=>true, 'data' => $html]);
         }
+
         return response()->json(['msg'=>'Thành công !', 'success'=>true, 'data' => $data]);
         
     }
