@@ -68,6 +68,8 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             // Authentication passed...
             return redirect()->route($this->redirectTo);
+        } else {
+          return redirect()->route('login')->withErrors(['login'=> "Sai Mật khẩu hoặc Email đăng nhập !"])->withInput();
         }
     }
 

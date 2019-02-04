@@ -102,6 +102,7 @@
 					<!-- Simple login form -->
 					<form action="{{route('CheckLogin')}}" method="POST">
 						@csrf
+
 						<div class="panel panel-body login-form">
 							<div class="text-center">
 								<div class="icon-object border-slate-300 text-slate-300">
@@ -111,6 +112,7 @@
 							</div>
 
 							<div class="form-group has-feedback has-feedback-left">
+								{!! $errors->first('login', '<label class="error">:message</label>') !!}
 								<input type="email" class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" placeholder="Email" name="email" value="{{ old('email') }}" required autofocus>
 								<div class="form-control-feedback">
 									<i class="icon-user text-muted"></i>
