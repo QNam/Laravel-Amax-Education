@@ -74,6 +74,7 @@ class StudentController extends Controller
     {
         $student = new StudentModel();
         $course  = new CourseModel();
+        $reg = new RegModel();
 
         $data['students'] = $this->_getDocData([]);
         
@@ -81,7 +82,7 @@ class StudentController extends Controller
 
         $data['title'] = 'Danh sách học sinh';
         
-        // dd($data['students']);
+          // dd($reg->hasTraded('208','4'));
 
         return view('student/index')->with($data);
     }
@@ -231,6 +232,10 @@ class StudentController extends Controller
                 $student->save();
 
                 foreach ($inpCourse as $key => $value) {
+
+                    // if ($reg->isRegister($student->stu_id,$value) > 0) {
+                        
+                    // }
                     $student->courses()->attach($value);    
                 }
                 
@@ -277,6 +282,11 @@ class StudentController extends Controller
                 
 
                 foreach ($inpCourse as $key => $value) {
+
+                    // if ($reg->hasTraded($student->stu_id,$value) > 0) 
+                    // {
+                        
+                    // }
                     $student->courses()->attach($value);    
                 }    
                 
@@ -288,6 +298,7 @@ class StudentController extends Controller
 
            } catch (\Throwable  $e) {
                 \DB::rollback();
+                throw $e;
                 Session::flash('error', 'Cập nhật Học Sinh thất bại !'); 
                 return redirect()->route('StudentIndex');
            }

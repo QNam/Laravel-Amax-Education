@@ -15,6 +15,7 @@ class DashboardController extends Controller
 {
     public $bgColorList = ['#039BE5','#e5033c','#e54803','#333','#7503e5','#252123','#f44336','#e91e63','#4caf50','#795548'];
 
+
     public function index()
     {
     	$data = [];

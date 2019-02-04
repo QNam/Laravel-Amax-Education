@@ -15,6 +15,23 @@ class Register extends Model
     public 	  $incrementing = 	true;
     protected $fillable = ['cou_id', 'stu_id'];
 
+    public function isRegister($stuId,$couId)
+    {
+        $checker = $this::where(['stu_id'=> $stuId, 'cou_id' => $couId])
+                        ->count();
+
+        return $checker;
+    }
+
+    public function hasTraded($stuId,$couId)
+    {
+        $checker = $this::where(['register.stu_id'=> $stuId, 'detail_bill.cou_id' => $couId])
+                        ->join('bill','bill.stu_id','register.stu_id')
+                        ->join('detail_bill','detail_bill.bill_id','bill.bill_id')
+                        ->count();
+
+        return $checker;
+    }
     // public function getCourseOfStudent($filter = [],$detail = false)
     // {
     // 	$student = new StudentModel();

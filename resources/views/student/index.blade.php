@@ -208,18 +208,15 @@
 
 
 
-
-{{-- 
-<link rel="stylesheet" href="{{ URL::asset('css/datatables.min.css') }}">
-<script type="text/javascript" src="{{ URL::asset('js/datatables.min.js') }}"></script> --}}
-
 @push('css-file')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+    {{-- <link rel="stylesheet" href="{{ URL::asset('css/datatables.min.css') }}"> --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
 @endpush
 
 @push('js-file')
     <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	{{-- <script type="text/javascript" src="{{ URL::asset('js/datatables.min.js') }}"></script>  --}}
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
 @endpush
@@ -280,51 +277,7 @@ $(document).ready( function () {
         
     });  
 
-    $("#payForm").validate({
-        rules: {
-        	"pTotalLesson[]": {
-				required: true,
-				number: true
-			},
-			"pCouDiscount[]":{
-				number: true,
-				min: 0,	
-				max:100
-			},
-			"billMonth":{
-				required: true,
-				number: true
-			},
-			"billPay":{
-				required: true,
-				number: true
-			}
 
-	       
-        },
-        messages: {
-        	"pTotalLesson[]": {
-				required: 'Tổng số buổi học là bắt buộc !',
-				number: 'Tổng số buổi học phải là số !'
-			},
-			"pCouDiscount[]":{
-				number: "Giảm giá phải là số !",
-				min: "Giảm giá thấp nhất là 0% !",	
-				max: "Giảm giá cao nhất là 100% !"
-			},
-			"billMonth":{
-				required: "Tháng đóng học là bắt buộc !",
-				number: "Tháng đóng học phải là số !"
-			},
-			"billPay":{
-				required: 'Tiền đóng học là bắt buộc !',
-				number: 'Tiền đóng học phải là số !'
-			}
-
-        }
-
-        
-    });  
 
 	
 	

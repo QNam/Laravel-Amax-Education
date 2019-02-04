@@ -11,9 +11,10 @@
 		<th></th>
 	</thead>
 	<tbody id="listBillData">
+		@if( count($bills) != 0)
 		@foreach($bills as $bill)
 
-		<tr class="cursor-pointer" id="bill-{{$bill->bill_id}}" data-popup="tooltip" title="Click để biết thông tin chi tiết" >
+		<tr class="cursor-pointer" id="bill-{{$bill->bill_id}}" >
 			<td onclick="openDiv({{$bill->bill_id}})"  class="text-center 
 				{!! ($bill->new_debt > 0) ? 'text-primary' : ""  !!} {!! ($bill->new_debt < 0) ? 'text-danger': ""  !!} {!! ($bill->new_debt == 0) ? 'text-success': ""  !!}
 			">{{$bill->bill_id}}</td>
@@ -26,7 +27,7 @@
 			<td>
 						
 				<button type="button" class="btn btn-warning" 
-					onclick="">
+					onclick="getBillInfo({{ $bill->bill_id }})">
 					<i class="icon-pencil3"></i>
 				</button>
 				
@@ -42,7 +43,7 @@
 			</td>
 		</tr>
 
-		<tr class="" id="detail-bill-{{$bill->bill_id}}" style="display: none;">
+		<tr class="detail-bill-item" id="detail-bill-{{$bill->bill_id}}" style="display: none;">
 			<td colspan="8" style="padding: 30px 5px; background-color: #eee">
 				
 				<div class="panel panel-white">
@@ -68,7 +69,7 @@
 								<p><span class="text-bold">Tổng tiền: </span>{{$bill->bill_total}}</p>								
 								<p><span class="text-bold">Thực thu: </span>	{{$bill->bill_pay}}</p>
 								<p><span class="text-bold">Trả lại: </span>	
-									{{ ($bill->isExcess == "0") ? $bill->bill_pay - $bill->bill_total : "Không" }}
+									{{ ($bill->isExcess == "0" && $bill->bill_pay > $bill->bill_total) ? $bill->bill_pay - $bill->bill_total : "Không" }}
 								</p>
 							</div>
 						</div>
@@ -104,10 +105,22 @@
 		</tr>
 
 		@endforeach
+		@else
+		<tbody id="listBillData">
+			<tr>
+				<td colspan="8" class="text-center">Không tìm thấy hóa đơn nào !</td>
+			</tr>
+		</tbody>
+		@endif
 	</tbody>
 </table>
+<div class="text-right" style="margin-top: 20px;">
+{{ $bills->links() }}	
+</div>
+
 <script>
 	function openDiv(id){
+	    // $('.detail-bill-item').toggle();
 	    $("#detail-bill-"+id).toggle();
 	    vCreateTotalOfCourse(id);
     }

@@ -4,6 +4,9 @@ a:active
 {
 	text-decoration: none;
 }
+.is-invalid{
+    border-color: #e3342f
+}
 thead{
     border-top: solid 1px #ddd;
 }
@@ -25,8 +28,10 @@ thead{
     font-weight: bold!important;
 }
 label.error{
-    color: red;
     margin-top: 5px;
+    font-size: 80%;
+    color: #e3342f;
+    font-weight: bolder;
 }
 
 .modal-title{

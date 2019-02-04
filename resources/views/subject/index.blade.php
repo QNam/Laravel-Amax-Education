@@ -40,22 +40,20 @@
 				<tr id="sub-{{ $subject->sub_id }}">
 					<td class="w-5 text-center">{{++$i}}</td>
 					<td>{{ $subject->sub_name }}</td>
-					<td style="display: flex">
-						<button type="button" class="btn btn-warning" style="margin-right: 10px;" 
+					<td class="w-15">
+						<button  type="button" class="btn btn-warning d-inline" style="margin-right: 10px;" 
 							onclick="getSubjetInfo({{$subject->sub_id}}); createModel('#addSubjectModal','update','Cập nhật Môn học');">
 							<i class="icon-pencil3"></i>
 						</button>
 						
-						<form action="{{route('SubjectDelete') }}" method="POST" id="formSubject-{{$subject->sub_id}}">
+						<form style="display: inline;" action="{{route('SubjectDelete') }}" method="POST" id="formSubject-{{$subject->sub_id}}">
 							@csrf
 							<input type="hidden" value="{{$subject->sub_id}}" name="subId" required="true">
 							<button type="button" class="btn btn-danger" onclick="deleteSubject({{$subject->sub_id}})">
 								<i class="icon-bin"></i>
 							</button>
 						</form>
-					</td>
-
-					
+					</td>		
 				</tr>
 
 

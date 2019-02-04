@@ -19,6 +19,7 @@ class CourseController extends Controller
         'couTeacher.required' => "Vui lòng chọn một giáo viên",
         'couTeacher.numeric' => "Mã giáo viên phải là số !",
         'couGrade.numeric' => "Khối học phải là số !",
+        'couTime[][].required' => "Thời gian học không được bỏ trống !"
     ];
 
     public $rules = [
@@ -26,7 +27,8 @@ class CourseController extends Controller
         'couSubject' => "bail|required|numeric",
         'couGrade' => "numeric",
         'couTeacher' => "bail|required|numeric",
-        'couPrice' => "bail|required|numeric"
+        'couPrice' => "bail|required|numeric",
+        'couTime.*.*' => "required"
     ];
 
  	public function _getDocData($filter = [])

@@ -33,6 +33,9 @@
 	<link href="{{ URL::asset('css/app.css') }}" rel="stylesheet" type="text/css">
 	<script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
 	<script type="text/javascript" src="{{ URL::asset('js/common.js') }}"></script>
+	<style>
+		
+	</style>
 	<!-- /base CSS file -->
 	<script>
 		$( window ).load(function() { 
@@ -42,7 +45,7 @@
 			if( state != "" && state == 'hide')
 			{
 				
-				$('body').addClass('sidebar-xs');
+				// $('body').addClass('sidebar-xs');
 				
 			} 
 			if ( state != "" && state == 'show' ) 
@@ -54,7 +57,7 @@
 
 			if(state == ""){
 				
-				setCookie('state_slidebar','show',365);	
+				setCookie('state_slidebar','hide',365);	
 			}
 		});
 
@@ -72,7 +75,7 @@
 			}  
 
 			if(state == ""){
-				setCookie('state_slidebar','show',365);
+				setCookie('state_slidebar','hide',365);
 				
 			}
 		}
@@ -93,7 +96,7 @@
 
 </head>
 
-<body style="background-color: #f5f5f5" data-state-slidebar="nam">
+<body style="background-color: #f5f5f5" class="sidebar-xs">
 
 	<!-- Main navbar -->
 	<div class="navbar navbar-inverse navbar-fixed-top">
@@ -109,54 +112,6 @@
 		<div class="navbar-collapse collapse" id="navbar-mobile">
 			<ul class="nav navbar-nav">
 				<li><a class="sidebar-control sidebar-main-toggle hidden-xs" onclick="setStateSlidebar()"><i class="icon-paragraph-justify3"></i></a></li>
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-						<i class="icon-git-compare"></i>
-						<span class="visible-xs-inline-block position-right">Git updates</span>
-						<span class="badge bg-warning-400">update</span>
-					</a>
-					
-					<div class="dropdown-menu dropdown-content">
-						<div class="dropdown-content-heading">
-							Updates
-							<ul class="icons-list">
-								<li><a href="#"><i class="icon-sync"></i></a></li>
-							</ul>
-						</div>
-	
-						<ul class="media-list dropdown-content-body width-350">
-							<li class="media">
-								<div class="media-left">
-									<a href="#" class="btn border-success text-success btn-flat btn-rounded btn-icon btn-sm"><i class="icon-git-merge"></i></a>
-								</div>
-								
-								<div class="media-body">
-									<a href="#">Quoc Nam,</a> <span class="text-semibold">Tạo Lịch học.</span>
-								</div>
-							</li>
-							<li class="media">
-								<div class="media-left">
-									<a href="#" class="btn border-success text-success btn-flat btn-rounded btn-icon btn-sm"><i class="icon-git-merge"></i></a>
-								</div>
-								
-								<div class="media-body">
-									<a href="#">Quoc Nam,</a> <span class="text-semibold">Thêm chức năng xem danh sách học sinh của khóa học.</span>
-								</div>
-							</li>
-
-							<li class="media">
-								<div class="media-left">
-									<a href="#" class="btn border-success text-success btn-flat btn-rounded btn-icon btn-sm"><i class="icon-git-merge"></i></a>
-								</div>
-								
-								<div class="media-body">
-									<a href="#">Quoc Nam,</a> <span class="text-semibold">Thêm thời gian bắt đầu, kết thúc, khối của khóa học.</span>
-								</div>
-							</li>
-						</ul>
-
-					</div>
-				</li>
 			</ul>
 			
 
@@ -166,17 +121,14 @@
 				<li class="dropdown dropdown-user">
 					<a class="dropdown-toggle" data-toggle="dropdown">
 						<img src="{{ URL::asset('images/placeholder.jpg')}}" alt="">
-						<span>Đoàn Quốc Nam</span>
+						<span>{{Auth::user()->name}}</span>
 						<i class="caret"></i>
 					</a>
 
 					<ul class="dropdown-menu dropdown-menu-right">
-						<li><a href="#"><i class="icon-user-plus"></i> My profile</a></li>
-						<li><a href="#"><i class="icon-coins"></i> My balance</a></li>
-						<li><a href="#"><span class="badge bg-teal-400 pull-right">58</span> <i class="icon-comment-discussion"></i> Messages</a></li>
-						<li class="divider"></li>
 						<li><a href="#"><i class="icon-cog5"></i> Account settings</a></li>
-						<li><a href="#"><i class="icon-switch2"></i> Logout</a></li>
+						<li><form action="{{route('logout')}}" method="post" id="logoutForm">@csrf</form>
+							<a href="#" onclick="$('#logoutForm').submit();"><i class="icon-switch2"></i> Logout</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -201,9 +153,9 @@
 							<div class="media">
 								<a href="#" class="media-left"><img src="{{ URL::asset('images/placeholder.jpg')}}" class="img-circle img-sm" alt=""></a>
 								<div class="media-body">
-									<span class="media-heading text-semibold">Đoàn Quốc Nam</span>
+									<span class="media-heading text-semibold">{{Auth::user()->name}}</span>
 									<div class="text-size-mini text-muted">
-										<i class="icon-pin text-size-small"></i> &nbsp;Quản trị viên
+										<i class="icon-pin text-size-small"></i>{{Auth::user()->role == 1 ? ' Quản trị viên' : ' Người kiểm duyệt'}} 
 									</div>
 								</div>
 
@@ -258,6 +210,14 @@
 										<li><a href="{{route('BillIndex')}}">Danh sách hóa đơn</a></li>
 									</ul>
 								</li>
+								@if(Auth::user()->role == 1)
+								<li>
+									<a href="#"><i class="icon-person"></i> <span>Quản trị viên</span></a>
+									<ul>
+										<li><a href="{{route('UserIndex')}}">Danh sách QTV</a></li>
+									</ul>
+								</li>
+								@endif
 
 							</ul>
 						</div>

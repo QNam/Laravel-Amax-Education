@@ -16,9 +16,24 @@ class Bill extends Model
         'bill_id', 'bill_discount','bill_total', 'month', 'stu_id','note','old_debt','isExcess'
     ];
 
+    private $paginate = 15;
+
     public function detail_bills()
     {
         return $this->hasMany('App\Model\DetailBill','bill_id','detail_bill_id');
+    }
+
+     public function getBillInfo($filter = [])
+    {
+        $bill = new Bill();
+
+        return $bill::where($filter)
+                    ->join('student','student.stu_id','bill.stu_id')
+                    ->join('detail_bill','detail_bill.bill_id','bill.bill_id')
+                    ->groupBy('bill.bill_id')
+                    ->orderBy('created_at', 'DESC')
+                    ->select(['bill.*','student.stu_id','student.stu_wallet','student.stu_name'])
+                    ->paginate($this->paginate);
     }
 
     public function getBillOfStudent($stuId)
@@ -62,15 +77,7 @@ class Bill extends Model
         return false;
     }
     
-    public function getBillInfo($filter = [])
-    {
-        $bill = new Bill();
-
-        return $bill::where($filter)
-                    ->join('student','student.stu_id','bill.stu_id')
-                    ->orderBy('created_at', 'DESC')
-                    ->get(['bill.*','student.stu_id','student.stu_wallet','student.stu_name']);
-    }
+   
 
     public function getDetailBill($bill_id)
     {

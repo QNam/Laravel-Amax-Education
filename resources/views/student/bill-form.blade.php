@@ -142,6 +142,54 @@
 
 @push('js-code')
 <script>
+
+$(document).ready(function($) {
+	    $("#payForm").validate({
+        rules: {
+        	"pTotalLesson[]": {
+				required: true,
+				number: true
+			},
+			"pCouDiscount[]":{
+				number: true,
+				min: 0,	
+				max:100
+			},
+			"billMonth":{
+				required: true,
+				number: true
+			},
+			"billPay":{
+				required: true,
+				number: true
+			}
+
+	       
+        },
+        messages: {
+        	"pTotalLesson[]": {
+				required: 'Tổng số buổi học là bắt buộc !',
+				number: 'Tổng số buổi học phải là số !'
+			},
+			"pCouDiscount[]":{
+				number: "Giảm giá phải là số !",
+				min: "Giảm giá thấp nhất là 0% !",	
+				max: "Giảm giá cao nhất là 100% !"
+			},
+			"billMonth":{
+				required: "Tháng đóng học là bắt buộc !",
+				number: "Tháng đóng học phải là số !"
+			},
+			"billPay":{
+				required: 'Tiền đóng học là bắt buộc !',
+				number: 'Tiền đóng học phải là số !'
+			}
+
+        }
+
+        
+    });  
+});
 	
 $('#payModal').on('hidden.bs.modal', function () {
     $('#payModal input').val("");
@@ -167,10 +215,9 @@ $('#payModal').on('show.bs.modal', function () {
 
 })
 
-
-
-
 </script>
+
+
 <script>
 	//-----------------------------------------------------------------------------------------------------------------------------------------	   
 //Các hàm liên quan đến Tạo HTML
