@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
@@ -39,6 +41,12 @@ class LoginController extends Controller
       
     }
 
+    public $rules = ['email' => 'bail|required|email',
+                    'password' => 'required'];
+    public $msg = ['email.required' => 'Email không được bỏ trống !',
+                   'email.email' => 'Email phải đúng định dạng !',
+                   'password.required' => "Mật khẩu không được bỏ trống !" ];
+
     public function index()
     {
         $data = [];
@@ -52,6 +60,12 @@ class LoginController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
+          $validator = Validator::make($request->all(), $this->rules, $this->msg);
+
+        if ( $validator->fails() ) {
+              return redirect()->route('login')->withErrors($validator)->withInput();
+              // return response()->json(['msg'=>'Lỗi !', 'validate'=>false, 'data' => $validator->errors()->getMessages() ]);
+        }
         if (Auth::attempt($credentials)) {
             // Authentication passed...
             return redirect()->route($this->redirectTo);

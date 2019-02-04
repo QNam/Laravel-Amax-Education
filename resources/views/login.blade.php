@@ -116,9 +116,7 @@
 									<i class="icon-user text-muted"></i>
 								</div>
 								 @if ($errors->has('email'))
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
+                                    {!! $errors->first('email', '<label class="error">:message</label>') !!}	
                                 @endif
 							</div>
 
@@ -128,9 +126,7 @@
 									<i class="icon-lock2 text-muted"></i>
 								</div>
 								 @if ($errors->has('password'))
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
+                                    {!! $errors->first('password', '<label class="error">:message</label>') !!}	
                                 @endif
 							</div>
 
