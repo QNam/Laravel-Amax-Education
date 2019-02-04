@@ -26,7 +26,7 @@
 	</a>
 </div>
 
-<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+<div>
 	<table id="listSubject" class="table table-bordered" style="width: 100%">
 		<thead>
 			<th>Stt</th>
@@ -113,6 +113,9 @@
 <script>
 	function getSubjetInfo(id)
     {
+    	$('#addSubjectModal').modal('show');
+    	showLargeLoading('#addSubjectModal .modal-dialog');
+
     	$.ajax({
     		url: "{{route('SubjectGetOne')}}",
     		method: 'POST',
@@ -120,24 +123,24 @@
     			subId: id
     		},
     		success: function(data){
-    			console.log('success');
-    			
-    			if (data['success']) 
-    			{
-    				$('#addSubjectModal').modal('show');
-    				var subject = data['data'];
 
+    			if (data['success']) 
+    			{    				
+    				var subject = data['data'];
 	    			$('input[name="subId"]').val(subject['sub_id']);
 	    			$('input[name="subName"]').val(subject['sub_name']);
+    			} 
+	
+    			hideOverLoading('#addSubjectModal .modal-dialog');
 
-    			} else {
+    			if(!data['success']) {
+    				$('#addSubjectModal').modal('hide');
     				showNotify("",data['msg'],'bg-danger');
     			}
-    			
-
     		},
     		error:function() {
-    			console.log('fail');
+    			hideOverLoading('#addSubjectModal .modal-dialog');
+    			$('#addSubjectModal').modal('hide');
     			showNotify("",'Lấy dữ liệu thất bại !','bg-danger');
     		}
     	})

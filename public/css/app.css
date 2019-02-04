@@ -48,7 +48,7 @@ a.editable-click:hover {
 	height: auto!important;
 }
 .dataTables_length{
-	margin-left: 0px;
+	margin: 0px!important;
 }
 
 .filter{

@@ -17,7 +17,7 @@
 			<label for="" class="control-label text-bold" style="margin-top: 0.5em">Họ tên:</label>
 		</div>
 		<div class="col-sm-9">
-			<input type="text" placeholder="Họ tên" class="form-control {{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="{{ old('name',$self->name) }}">	
+			<input type="text" placeholder="Họ tên" class="form-control {{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="{{ old('name',$self->name) }}" required="true">	
 			{!! $errors->first('name', '<label class="error">:message</label>') !!}		
 		</div>
 	</div>
@@ -27,7 +27,7 @@
 			<label for="" class="control-label text-bold" style="margin-top: 0.5em">Email:</label>
 		</div>
 		<div class="col-sm-9">
-			<input type="email" placeholder="Email" class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email',$self->email) }}">	
+			<input type="email" placeholder="Email" class="form-control {{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email',$self->email) }}" required="true">	
 			{!! $errors->first('email', '<label class="error">:message</label>') !!}		
 		</div>
 	</div>

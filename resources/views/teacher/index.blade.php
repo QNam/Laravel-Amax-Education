@@ -45,7 +45,7 @@
 		<?php $i = 0?>
 		@foreach($teachers as $teacher)
 		<tr>
-			<td class="w-5">{{ ++$i }}</td>
+			<td class="w-5 text-center">{{ ++$i }}</td>
 			<td>{{ $teacher->tea_name }}</td>
 			<td>
 				@foreach($teacher->courses as $course)
@@ -102,7 +102,7 @@
 
 					<div class="form-group">
 							<label for="" class="control-label text-bold">SDT: </label>	
-							<input type="number" required="" placeholder="" class="form-control" name="teaPhone" value="{{ old('teaPhone') }}">
+							<input type="number" required="true" placeholder="" class="form-control" name="teaPhone" value="{{ old('teaPhone') }}">
 							{!! $errors->first('teaPhone', '<label class="error">:message</label>') !!}				
 					</div>
 					
@@ -145,15 +145,13 @@
 
 @push('js-code')
 	
-<script>
-	
+<script>	
 	$(document).ready( function () {
 	    $('#listTeacher').DataTable();
 	});	    
 
 	function deleteTeacher()
 	{
-		
 		if ( confirm("Giáo viên sẽ không thể xóa khi vẫn chủ nhiệm 1 lớp ! Bạn chắc chắn xóa ?") ) 
 		{
 			$(this).parent().submit();
@@ -163,8 +161,8 @@
     function getTeacherInfo(id)
     {
     	$('#addTeacherModal').modal('show');
-    	showLargeLoading('#addTeacherModal .modal-content');
-    	console.log('a');
+    	showLargeLoading('#addTeacherModal .modal-dialog');
+
     	$.ajax({
     		url: "{{route('TeacherGetOne')}}",
     		method: 'POST',
@@ -172,28 +170,32 @@
     			tea_id: id
     		},
     		success: function(data){
-    			console.log('success');
-    			
 
-    			var teacher = data['data'];
-    			console.log(teacher);
+    			if(data['success'])
+    			{
+    				var teacher = data['data'];
+    				$('input[name="teaId"]').val(teacher['tea_id']);
+	    			$('input[name="teaName"]').val(teacher['tea_name']);
+	    			$('input[name="teaPhone"]').val(teacher['tea_phone']);
+	    			$('input[name="teaAddress"]').val(teacher['tea_address']);
+	    			$('input[name="teaOffice"]').val(teacher['tea_office']);
+    			}
 
-    			$('input[name="teaId"]').val(teacher['tea_id']);
-    			$('input[name="teaName"]').val(teacher['tea_name']);
-    			$('input[name="teaPhone"]').val(teacher['tea_phone']);
-    			$('input[name="teaAddress"]').val(teacher['tea_address']);
-    			$('input[name="teaOffice"]').val(teacher['tea_office']);
+    			hideOverLoading('#addTeacherModal .modal-dialog');
 
+    			if (!data['success']) 
+    			{
+    				showNotify("",data['msg'],'bg-danger');
+    				$('#addTeacherModal').modal('hide');
+    			}
     		},
     		error:function() {
-    			console.log('fail');
+    			showNotify("","Có lỗi trong quá trình lấy dữ liệu !",'bg-danger');
+    			hideOverLoading('#addTeacherModal .modal-dialog');
+
     		}
     	})
-    	hideOverLoading('#addTeacherModal .modal-content');
     }
-
-
-
 
 </script>
 

@@ -225,7 +225,7 @@ class UserController extends Controller
         $emptyState = $request->input('opw') == "" && $request->input('npw') == "" && $request->input('npwr') == "";
 
         if (!$emptyState) {
-            $selfUpdateRules['npw'] = 'min:6';
+            $this->selfUpdateRules['npw'] = 'min:6';
         }
 
         //Check xem email có thay đổi, nếu không đổi thì bỏ rule unique.
