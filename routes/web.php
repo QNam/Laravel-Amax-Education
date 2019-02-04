@@ -56,6 +56,8 @@ Route::group(['middleware' => ['auth', 'web']], function() {
 	Route::post('/get', 'UserController@userGetOne')->name('UserGetOne')->middleware(CheckRole::class);
 	Route::post('/user/save', 'UserController@store')->name('UserStore')->middleware(CheckRole::class);
 	Route::post('/user/delete', 'UserController@deleteUser')->name('UserDelete')->middleware(CheckRole::class);
+	Route::get('/self', 'UserController@selfUpdateView')->name('SelfIndex');
+	Route::post('/self/store', 'UserController@selfUpdateStore')->name('SelfStore');
 
 });
 

@@ -126,7 +126,7 @@
 					</a>
 
 					<ul class="dropdown-menu dropdown-menu-right">
-						<li><a href="#"><i class="icon-cog5"></i> Account settings</a></li>
+						<li><a href="{{route('SelfIndex')}}"><i class="icon-cog5"></i> Account settings</a></li>
 						<li><form action="{{route('logout')}}" method="post" id="logoutForm">@csrf</form>
 							<a href="#" onclick="$('#logoutForm').submit();"><i class="icon-switch2"></i> Logout</a></li>
 					</ul>

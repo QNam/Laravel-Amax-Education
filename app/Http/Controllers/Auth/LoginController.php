@@ -60,11 +60,10 @@ class LoginController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-          $validator = Validator::make($request->all(), $this->rules, $this->msg);
+        $validator = Validator::make($request->all(), $this->rules, $this->msg);
 
         if ( $validator->fails() ) {
-              return redirect()->route('login')->withErrors($validator)->withInput();
-              // return response()->json(['msg'=>'Lỗi !', 'validate'=>false, 'data' => $validator->errors()->getMessages() ]);
+          return redirect()->route('login')->withErrors($validator)->withInput();
         }
         if (Auth::attempt($credentials)) {
             // Authentication passed...

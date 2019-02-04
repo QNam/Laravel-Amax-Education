@@ -50,6 +50,19 @@ class UserController extends Controller
     ];
 
 
+    private $selfUpdateRules = ['name' => 'bail|max:255|required',
+                                'email' => 'bail|string|email|max:255|unique:users',
+                                'npwr' => 'bail|same:npw'];
+
+    private $selfUpdateMsg = ['name.required' => 'Họ tên là bắt buộc !',
+                                'name.max' => 'Tối đa 255 kí tự !',
+                                'email.email' => 'Email không đsung định dạng !',
+                                'email.max' => 'Email tối đa 255 kí tự ',
+                                'email.unique' => 'Email đã tồn tại',
+                                'npw.min' => 'Mật khẩu mới tối thiểu 6 kí tự',
+                                'npwr.same' => 'Xác nhận mật khẩu không chính xác !'];
+
+
 	public function _getDocData($filter = [])
 	{
 		$user = new UserModel();
@@ -70,6 +83,7 @@ class UserController extends Controller
 
 		return $data;
 	}
+
 
 	public function userGetOne(Request $request)
 	{
@@ -119,6 +133,7 @@ class UserController extends Controller
         }	
 	}
 
+
     public function index()
     {
     	$data = [];
@@ -127,6 +142,7 @@ class UserController extends Controller
 
     	return view('user/index')->with($data);
     }
+
 
     public function store(Request $request)
     {
@@ -188,5 +204,71 @@ class UserController extends Controller
                 return redirect()->route('UserIndex');
             }   
     	}
+    }
+
+    public function selfUpdateView()
+    {
+        $user = new UserModel();
+
+        $data = [];
+        $data['title'] = 'Cập nhật thông tin cá nhân';
+        $data['self'] = $user::where('id',Auth::id())->get()[0];
+
+        return view('user/self')->with($data);
+    }
+
+
+
+    public function selfUpdateStore(Request $request)
+    {   
+        $user = new UserModel();
+        $emptyState = $request->input('opw') == "" && $request->input('npw') == "" && $request->input('npwr') == "";
+
+        if (!$emptyState) {
+            $selfUpdateRules['npw'] = 'min:6';
+        }
+
+        //Check xem email có thay đổi, nếu không đổi thì bỏ rule unique.
+        if (Auth::user()->email == $request->input('email') ) {
+            $this->selfUpdateRules['email'] = ['bail','required', 'string', 'email', 'max:255'];
+        }
+
+        $validator = Validator::make($request->all(), $this->selfUpdateRules, $this->selfUpdateMsg);
+        $updateError = $validator->errors()->getMessages();
+
+       //Check xem nếu có 1 trg nào trong đặt lại pass có giá trị thì bắt đầu validate pass.
+        if(!$emptyState)
+        {
+            ($request->input('opw') == "") ?  $updateError['opw'][] = 'Mật khẩu cũ không được bỏ trống !' : "";
+            ($request->input('npw') == "") ?  $updateError['npw'][] = 'Mật khẩu mới không được bỏ trống !' : "";
+            ($request->input('npwr') == "") ?  $updateError['npwr'][] = 'Lặp lại mật khẩu mới không được bỏ trống !' : "";
+
+            if(!Hash::check( $request->input('opw'), Auth::user()->password) && $request->input('opw') != ""){
+                $updateError['opw'][] = 'Mật khẩu cũ không chính xác !';
+            }
+        }
+
+
+         if ( count($updateError) > 0 ) {
+            return redirect()->route('SelfIndex')->withErrors($updateError)->withInput();
+        } 
+
+        $dataUpdate = [ "name" => $request->input('name'),
+                        "email" => $request->input('email')];
+
+        if (!$emptyState) {
+            $dataUpdate['password'] = Hash::make($request->input('npwr'));
+        }
+
+        try{
+            $user::where('id',Auth::id() )->update($dataUpdate);
+      
+            Session::flash('success', 'Cập nhật thông tin thành công !'); 
+            return redirect()->route('SelfIndex');
+        } catch(\Exception $e) {
+            Session::flash('error', 'Cập nhật thông tin thất bại !'); 
+            return redirect()->route('SelfIndex');
+        }   
+
     }
 }
