@@ -6,10 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Model\Student as StudentModel;
 use App\Model\Teacher as TeacherModel;
-use App\Model\Register as RegModel;
 use App\Model\Course as CourseModel;
-use App\Model\Bill as BillModel;
-use App\Model\DetailBill as DetailBillModel;
+use App\Model\HistoryUpdate as HistoryUpdateModel;
 
 class DashboardController extends Controller
 {
@@ -18,6 +16,8 @@ class DashboardController extends Controller
 
     public function index()
     {
+        // $updater = new HistoryUpdateModel();
+
     	$data = [];
     	$student = new StudentModel();
     	$course = new CourseModel();

@@ -13,6 +13,14 @@
 	<tbody id="listBillData">
 		@if( count($bills) != 0)
 		@foreach($bills as $bill)
+		
+		@php
+			$bill_total = number_format($bill->bill_total,0,',','.');
+			$bill_pay = number_format($bill->bill_pay,0,',','.');
+			$old_debt = number_format($bill->old_debt,0,',','.');
+			$new_debt = number_format($bill->new_debt,0,',','.');
+			$billExcess = number_format($bill->bill_pay - $bill->bill_total,0,',','.')
+		@endphp
 
 		<tr class="cursor-pointer" id="bill-{{$bill->bill_id}}" >
 			<td onclick="openDiv({{$bill->bill_id}})"  class="text-center 
@@ -21,16 +29,16 @@
 			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill->stu_name}}</td>
 			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill->created_at}}</td>
 			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill->month}}</td>
-			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill->bill_total}}</td>
+			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill_total}}</td>
 			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill->bill_discount}} %</td>
-			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill->bill_pay}}</td>
+			<td onclick="openDiv({{$bill->bill_id}})" >{{$bill_pay}}</td>
 			<td>
-						
-				<button type="button" class="btn btn-warning" 
-					onclick="getBillInfo({{ $bill->bill_id }})">
-					<i class="icon-pencil3"></i>
-				</button>
-				
+				@if( $bill->allow_update == 1)						
+					<button type="button" class="btn btn-warning" 
+						onclick="getBillInfo({{ $bill->bill_id }})">
+						<i class="icon-pencil3"></i>
+					</button>
+				@endif
 
 				<form action="{{route('BillDelete')}}" method="POST" style="display: inline;">
 					@csrf
@@ -64,12 +72,12 @@
 								<p><span class="text-bold">Ngày lập: </span>{{$bill->created_at}}</p>
 							</div>
 							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"
-								<p><span class="text-bold">Thừa/thiếu trước đó: </span>{{$bill->old_debt}}</p>
+								<p><span class="text-bold">Thừa/thiếu trước đó: </span>{{$old_debt}}</p>
 								<p><span class="text-bold">Khuyến mãi: </span>{{ $bill->bill_discount }} %</p>
-								<p><span class="text-bold">Tổng tiền: </span>{{$bill->bill_total}}</p>								
-								<p><span class="text-bold">Thực thu: </span>	{{$bill->bill_pay}}</p>
+								<p><span class="text-bold">Tổng tiền: </span>{{$bill_total}}</p>								
+								<p><span class="text-bold">Thực thu: </span>	{{$bill_pay}}</p>
 								<p><span class="text-bold">Trả lại: </span>	
-									{{ ($bill->isExcess == "0" && $bill->bill_pay > $bill->bill_total) ? $bill->bill_pay - $bill->bill_total : "Không" }}
+									{{ ($bill->isExcess == "0" && $bill->bill_pay > $bill->bill_total) ? $billExcess : "Không" }}
 								</p>
 							</div>
 						</div>
@@ -86,15 +94,15 @@
 							@foreach($bill->details as $detail)
 							<tr class="vCou-{{$detail->cou_id}} detail-bill-item">
 								<td>{{$detail->cou_name}}</td>
-								<td class="vCouPrice">{{$detail->cou_price}}</td>
+								<td class="vCouPrice">{{ number_format($detail->cou_price,0,',','.') }}</td>
 								<td class="w-5 vTotalLesson">{{$detail->total_lesson}}</td>
 								<td class="vCouDiscount">{{$detail->discount}}</td>
-								<td class="vCouTotal">{{$detail->couTotal}}</td>
+								<td class="vCouTotal">{{ number_format($detail->couTotal,0,',','.') }}</td>
 							</tr>
 							@endforeach
 							<tr>
 								<td colspan="4" class="text-bold">Tổng tiền: </td>
-								<td class="text-bold cousTotal">{{$bill->cousTotal}}</td>
+								<td class="text-bold cousTotal">{{number_format($bill->cousTotal,0,',','.')}}</td>
 							</tr>
 						</tbody>
 						</table>

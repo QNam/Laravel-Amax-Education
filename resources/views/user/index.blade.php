@@ -95,17 +95,6 @@
 						<input type="password" placeholder="" class="form-control {{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" value="{{ old('password') }}">	
 						{!! $errors->first('password', '<label class="error">:message</label>') !!}		
 					</div>	
-
-					<div class="form-group">
-						<input type="radio" name="role" value="1" id="adminInp">
-						<label for="adminInp" class="control-label text-bold" >Quản trị viên</label>
-						<br>
-						<input type="radio" name="role" value="2" id="modInp">
-						<label for="modInp" class="control-label text-bold">Người kiểm duyệt</label>
-						<br>
-						{!! $errors->first('role', '<label class="error">:message</label>') !!}	
-					</div>		
-					
 						
 					<div class="text-right">
 						<button type="submit" class="btn btn-primary">Xác nhận</button>	
@@ -142,22 +131,7 @@
 						<label for="" class="control-label text-bold">Email: </label>	
 						<input type="email" required="" placeholder="" class="form-control" name="email" value="">
 						<label for="" class="error"></label>
-					</div>
-						
-
-					<div class="form-group roleInp">
-						<div>
-							<input type="radio" name="role" value="1" id="uAdminInp">
-							<label for="uAdminInp" class="control-label text-bold" >Quản trị viên</label>	
-						</div>
-						
-						<div>
-							<input type="radio" name="role" value="2" id="uModInp">
-							<label for="uModInp" class="control-label text-bold">Người kiểm duyệt</label>	
-						</div>
-						
-						<label for="" class="error"></label>
-					</div>		
+					</div>	
 					
 						
 					<div class="text-right">
@@ -198,16 +172,18 @@
 			type: 'POST',
 			data: {id: id},
 			success: function(data){
-				console.log();
+
 				if (data['success']) 
 				{
 					$('#updateUserModal input[name=name]').val(data['data']['name']);
 					$('#updateUserModal input[name=id]').val(data['data']['id']);
 					$('#updateUserModal input[name=email]').val(data['data']['email']);
-					$('#updateUserModal input[name=role][value='+data['data']['role']+']').prop('checked', true);
-					hideOverLoading('#updateUserModal .modal-dialog');
-				} else {
-					hideOverLoading('#updateUserModal .modal-dialog');
+				}
+
+				hideOverLoading('#updateUserModal .modal-dialog');
+
+				if(!data['success']){
+					$("#updateUserModal").modal('hide');
 					showNotify("",'Không lấy được thông tin quản trị viên !','bg-danger');
 				}
 			},
@@ -228,7 +204,7 @@
 		$.ajax({
 			url: "{{route('UserStore')}}",
 			type: 'POST',
-			data: {id: id,name:name,email:email,role:role},
+			data: {id: id,name:name,email:email},
 			success: function(data){
 				console.log(data);
 

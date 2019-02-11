@@ -16,8 +16,7 @@ class UserController extends Controller
     private $insertRules = [ 
             'name' => ['bail','required', 'string', 'max:255'],
             'email' => ['bail','required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['bail','required', 'min:6'],
-            'role' => ['bail','required','in:1,2']
+            'password' => ['bail','required', 'min:6']
         ];
 
     private $insertMsg = [
@@ -29,14 +28,11 @@ class UserController extends Controller
         'email.unique' => "Email đã tồn tại !",
         'password.required' => "Mật khẩu là bắt buộc !",
         'password.min' => "Mật khẩu tối thiểu 6 kí tự !",
-        'role.required' => 'Bắt buộc phải phân quyền !',
-        'role.in' => 'Giá trị không hợp lệ !',
     ];
 
      private $updateRules = [ 
             'name' => ['bail','required', 'string', 'max:255'],
             'email' => ['bail','required', 'string', 'email', 'max:255'],
-            'role' => ['bail','required','in:1,2']
         ];
 
     private $updateMsg = [
@@ -45,8 +41,6 @@ class UserController extends Controller
         'name.max' => "Tên tối đa 255 kí tự !",
         'email.required' => "Email không được bỏ trống !",
         'email.email' => "Email phải đsung định dạng !",
-        'role.required' => 'Bắt buộc phải phân quyền !',
-        'role.in' => 'Giá trị không hợp lệ !',
     ];
 
 
@@ -152,7 +146,6 @@ class UserController extends Controller
     	$data = [
     		"name" => $request->input('name'),
 			"email" => $request->input('email'),
-            "role" => $request->input('role'),
 			"password" => Hash::make($request->input('password')) ];
 
     	if (isset($userId)) 
@@ -162,12 +155,12 @@ class UserController extends Controller
 
             $updateError = $validator->errors()->getMessages();
 
-            $userUpdated = $user::where('id',$userId)->get(['role'])->toArray();
+            // $userUpdated = $user::where('id',$userId)->get(['role'])->toArray();
 
-            if(count($userUpdated) != 0 && $userUpdated[0]['role'] == 1 &&  $request->input('role') == 2 && Auth::id() != $userId)
-            {
-                $updateError['role'][] = 'Không thể cập nhật quyền người kiểm duyệt của QTV này';
-            }            
+            // if(count($userUpdated) != 0 && $userUpdated[0]['role'] == 1 &&  $request->input('role') == 2 && Auth::id() != $userId)
+            // {
+            //     $updateError['role'][] = 'Không thể cập nhật quyền người kiểm duyệt của QTV này';
+            // }            
 
             if ( count($updateError) > 0 ) {
                   return response()->json(['msg'=>'Lỗi !', 'validate'=>false, 'data' => $updateError ]);
@@ -175,8 +168,7 @@ class UserController extends Controller
     		try{
     			$user::where('id',$userId)->update([
     				"name" => $request->input('name'),
-                    "email" => $request->input('email'),
-					"role" => $request->input('role'),
+                    "email" => $request->input('email')
     			]);
           
                 Session::flash('success', 'Cập nhật Quản trị viên thành công !'); 

@@ -214,97 +214,40 @@
 
 		var data = [];
 
-		console.log(courses);
 
 		courses.forEach(function(value,index){
 			if ( value['cou_time'] != null ) 
 			{
 				value['cou_time'].forEach(function(val,id){
-					var item = {};
+
+					for(var i = 0; i<7; i++){
+						var item = {};
 					
-					item['title'] = value['cou_name'] /*+" "+ val['begin'] + ' - ' + val['end']*/;
-					item['start'] = moment(val['begin'],'HH:mm').day(val['date'] ).format();
-					item['end'] = moment(val['end'],'HH:mm').day( val['date'] ).format();
-					item['color'] = val['color'];
+						item['title'] = value['cou_name'] /*+" "+ val['begin'] + ' - ' + val['end']*/;
+						item['start'] = moment(val['begin'],'HH:mm').day(val['date'] - i*7).format();
+						item['end'] = moment(val['end'],'HH:mm').day(val['date'] - i*7).format();
+						item['color'] = val['color'];
 
-					data.push(item);
+						data.push(item);	
+					}
 
-					var item = {};
-					
-					item['title'] = value['cou_name'] /*+" "+ val['begin'] + ' - ' + val['end']*/;
-					item['start'] = moment(val['begin'],'HH:mm').day(val['date'] - 7 ).format();
-					item['end'] = moment(val['end'],'HH:mm').day( val['date']  - 7).format();
-					item['color'] = val['color'];
+					for(var i = 1; i<7; i++){
+						var item = {};
+						
+						item['title'] = value['cou_name'] /*+" "+ val['begin'] + ' - ' + val['end']*/;
+						item['start'] = moment(val['begin'],'HH:mm').day(Number(val['date']) + i*7 ).format();
+						item['end'] = moment(val['end'],'HH:mm').day(Number(val['date']) + i*7  ).format();
+						item['color'] = val['color'];
 
-					data.push(item);
-
-					var item = {};
-					
-					item['title'] = value['cou_name'] /*+" "+ val['begin'] + ' - ' + val['end']*/;
-					item['start'] = moment(val['begin'],'HH:mm').day(val['date'] - 14 ).format();
-					item['end'] = moment(val['end'],'HH:mm').day( val['date']  - 14).format();
-					item['color'] = val['color'];
-
-					data.push(item);
-
-					var item = {};
-					
-					item['title'] = value['cou_name'] /*+" "+ val['begin'] + ' - ' + val['end']*/;
-					item['start'] = moment(val['begin'],'HH:mm').day(val['date'] - 21 ).format();
-					item['end'] = moment(val['end'],'HH:mm').day( val['date']  - 21).format();
-					item['color'] = val['color'];
-
-					data.push(item);
-
-
-					var item = {};
-					
-					item['title'] = value['cou_name'] /*+" "+ val['begin'] + ' - ' + val['end']*/;
-					item['start'] = moment(val['begin'],'HH:mm').day(val['date'] - 28 ).format();
-					item['end'] = moment(val['end'],'HH:mm').day( val['date']  - 28).format();
-					item['color'] = val['color'];
-
-					data.push(item);
-
+						data.push(item);	
+					}
 				})
 			}
 		});
-
 		return data;
 	}
 </script>
 
-
-
-<script>
- // function {
-	// 	$.ajax({
-	// 		url: "",
-	// 		method: 'POST',
-	// 		data: {
-				
-	// 		},
-	// 		success: function(data){
-	// 			console.log('success');
-				
-
-	// 			if (data['success']) 
-	// 			{
-	// 				//showNotify("",data['msg'],'bg-success');
-
-	// 			} else {
-	// 			//showNotify("",data['msg'],'bg-danger');	    				
-	// 			}
-				
-
-	// 		},
-	// 		error:function() {
-	// 			console.log('error');
-	// 			//showNotify("",'Gửi dữ liệu thất bại','bg-danger');	
-	// 		}
-	// 	})
-	// } 
-</script>
 
 @endpush
 

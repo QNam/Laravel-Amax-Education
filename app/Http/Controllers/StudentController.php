@@ -10,6 +10,7 @@ use App\Model\Student as StudentModel;
 use App\Model\Register as RegModel;
 use App\Model\Course as CourseModel;
 use App\Model\Bill as BillModel;
+use App\Model\StudentLog as StuLogModel;
 use App\Model\DetailBill as DetailBillModel;
 
 class StudentController extends Controller
@@ -159,13 +160,27 @@ class StudentController extends Controller
 
         $student = new StudentModel();
         $bill    = new BillModel();
-        $dBill    = new DetailBillModel();
+        $dBill   = new DetailBillModel();
+        $stuLog  = new StuLogModel();
 
         $reg     = new RegModel();
 
 
         try{
             \DB::beginTransaction();
+
+            $stuDeleted = $student::where('stu_id',$stu_id)->get()[0];
+
+            $stuLog->insert([
+                'stu_id' => $stuDeleted->stu_id,
+                'stu_name' => $stuDeleted->stu_name,
+                'stu_address' => $stuDeleted->stu_address,
+                'parent_phone' => $stuDeleted->parent_phone,
+                'parent_name' => $stuDeleted->parent_name,
+                'reg_day' => $stuDeleted->created_at,
+                'note' => $stuDeleted->note,
+                'stu_grade' => $stuDeleted->stu_grade
+            ]);            
 
             $billList = $bill::where('stu_id',$stu_id)->get(['bill_id']);
 
@@ -176,17 +191,16 @@ class StudentController extends Controller
             $bill::where('stu_id',$stu_id)->delete();
                         
             $reg::where('stu_id',$stu_id)->delete();
-            $student::where('stu_id',$stu_id)->delete();
-           
+
            
             \DB::commit();  
             
-            return response()->json(['msg'=>'Xóa thành công !', 'success'=>true]);
+            return response()->json(['msg'=>'Xóa Học Sinh thành công !', 'success'=>true]);
 
         } catch (\Throwable  $e) {
             \DB::rollback();
             throw $e;  
-            response()->json(['msg'=>'Xóa không thành công !', 'success'=>false]);
+            response()->json(['msg'=>'Xóa Học Sinh không thành công !', 'success'=>false]);
         }
     } 
 
@@ -232,10 +246,6 @@ class StudentController extends Controller
                 $student->save();
 
                 foreach ($inpCourse as $key => $value) {
-
-                    // if ($reg->isRegister($student->stu_id,$value) > 0) {
-                        
-                    // }
                     $student->courses()->attach($value);    
                 }
                 
@@ -254,7 +264,7 @@ class StudentController extends Controller
         } 
         else {
 
-            \DB::beginTransaction();
+           
 
             
             $rulesU    = ['stuId' => 'required|numeric'];
@@ -268,7 +278,8 @@ class StudentController extends Controller
             }
 
            try{
-
+                 \DB::beginTransaction();
+                 
                 $student::where('stu_id', $student->stu_id)
                     ->update([
                        'stu_name' => $student->stu_name,
@@ -278,16 +289,19 @@ class StudentController extends Controller
                        'parent_name' => $student->parent_name
                     ]);
 
-                $reg::where('stu_id',$student->stu_id)->delete();
-                
+                // $reg::where('stu_id',$student->stu_id)->delete();
+                $reg->resetRegisterCourse($student->stu_id);
+
 
                 foreach ($inpCourse as $key => $value) {
 
-                    // if ($reg->hasTraded($student->stu_id,$value) > 0) 
-                    // {
-                        
-                    // }
-                    $student->courses()->attach($value);    
+                    if ($reg->hasTraded($student->stu_id,$value) > 0) 
+                    {
+                        $reg::where(['stu_id' => $student->stu_id,'cou_id' => $value])->update(['status'=> $reg::ACTIVE]);   
+                    } else {
+                        $student->courses()->attach($value);        
+                    }
+                    
                 }    
                 
                 

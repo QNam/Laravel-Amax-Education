@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
+use App\Model\HistoryUpdate as HistoryUpdateModel;
+
 class LoginController extends Controller
 {
     /*
@@ -65,8 +67,17 @@ class LoginController extends Controller
         if ( $validator->fails() ) {
           return redirect()->route('login')->withErrors($validator)->withInput();
         }
+
+        $updater = new HistoryUpdateModel();
+
         if (Auth::attempt($credentials)) {
-            // Authentication passed...
+            
+            if($updater->ckeckConditionUpdate() ) {
+
+              Session::flash('swu_mess', "Hệ thống tự động tăng khối của học sinh sẽ tự động chạy sau ".$updater::DELAY_TO_UPDATE."s. Không chuyển hướng trang !");
+              Session::flash('student_will_update', '1');  
+            }
+
             return redirect()->route($this->redirectTo);
         } else {
           return redirect()->route('login')->withErrors(['login'=> "Sai Mật khẩu hoặc Email đăng nhập !"])->withInput();

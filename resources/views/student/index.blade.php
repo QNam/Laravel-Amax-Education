@@ -19,6 +19,7 @@
 @endif
 <div class="panel panel-flat">
 <div class="panel-body">
+{{-- CONTROL --}}
 <div class="control">
 	<a data-toggle="modal" href='#addStudentModal'>
 		<button class="control-item btn btn-primary pull-right" 
@@ -32,10 +33,11 @@
 	</a>  
 </div>
 
+{{-- Bộ Lọc --}}
 <div class="filter clearfix">
 	<div action="" class="form-inline pull-right">
 		<div class="form-group has-feedback">
-			<input type="text" class="form-control" placeholder="Tìm kiếm ..." name="filterSearch" onkeyup="filterStudent()">
+			<input type="text" class="form-control" placeholder="Tìm kiếm ..." name="filterSearch" onkeypress="handleSearch(event)">
 		</div>
 
 		<select name="filterGrade" id="" class="form-control" onchange="filterStudent()">
@@ -61,7 +63,7 @@
 	</div>
 </div>
 
-
+{{-- danh sách học sinh --}}
 <div id="dataContent">
 	<table id="listStudent" class="table table-bordered">
 
@@ -128,7 +130,7 @@
 					</div>	
 						
 					
-					<p class="text-muted line-center-text"><span>Thông tin Phụ Huynh</span></p>
+					<h5 class="text-bold" style="margin-top: 20px;margin-bottom: 20px;">Thông tin phụ huynh</h5>
 					<div class="form-group">
 						<label for="" class="control-label">Họ và Tên</label>	
 						<input type="text" placeholder="Họ tên" class="form-control" name="parentName" value="{{ old('parentName') }}" >		
@@ -140,7 +142,7 @@
 						{!! $errors->first('parentPhone', '<label class="error">:message</label>') !!}	
 					</div>
 
-					<p class="text-muted line-center-text"><span>Đăng kí Học</span></p>
+					<h5 class="text-bold" style="margin-top: 20px;margin-bottom: 20px;">Đăng kí học</h5>
 					
 					<div class="row">
 					@foreach($courses as $course)
@@ -224,6 +226,15 @@
 @push('js-code')
 	
 <script>
+function handleSearch(e){
+    if(e.which == 13 ){
+        filterStudent();
+        console.log('a');
+    }
+
+    return false;
+}
+
 var studentDataTable;
 
 function setStudentDataTable()
@@ -255,6 +266,12 @@ $(document).ready( function () {
 	        }
 	      }
 	});
+	
+	$.fn.editable.defaults.mode = 'poppup';
+
+	$("body").tooltip({
+	    selector: '[data-title]'
+	});
 
 	$("#addStudentForm").validate({
         rules: {
@@ -278,15 +295,6 @@ $(document).ready( function () {
     });  
 
 
-
-	
-	
-	$.fn.editable.defaults.mode = 'poppup';
-
-	$("body").tooltip({
-	    selector: '[data-title]'
-	});
-
 	$("#payForm").submit(function(e){
         e.preventDefault(e);
     });
@@ -301,9 +309,8 @@ $(document).ready( function () {
 //-----------------------------------------------------------------------------------------------------------------------------------------	   
 	  function getDetailStudentInfo(id)
 	  {
-
+	  		$('#detailStudentInfoModal').modal('show');
 	  		showLargeLoading('#detailStudentInfoModal .modal-dialog');
-	    	$('#detailStudentInfoModal').modal('show');
 	    	$.ajax({
 	    		url: "{{route('StudentGetOne')}}",
 	    		method: 'POST',
@@ -313,27 +320,27 @@ $(document).ready( function () {
 	    		},
 	    		success: function(data)
 	    		{
-	    			if (data['success'] == true) 
+	    			if(data['success'] == true) 
 	    			{
 						$('#detailStudentInfoModal .modal-body').html(data['data']) 	    				
-	    				console.log(data);
-
 					    $('#detailStudentInfoModal').modal('show');
-					    hideOverLoading('#detailStudentInfoModal .modal-dialog'); 
-					    
-	    			} else {
-	    				showNotify("",'Lấy dữ liệu thất bại','bg-danger');
-	    				hideOverLoading('#detailStudentInfoModal .modal-dialog');	
+	    			} 
+
+	    			hideOverLoading('#detailStudentInfoModal .modal-dialog'); 
+
+	    			if(data['success'] == false)
+	    			{
 	    				$('#detailStudentInfoModal').modal('hide');
+	    				showNotify("",data['msg'],'bg-danger');
 	    			}
 
 	    		},
 	    		error:function() 
 	    		{
 	    			console.log('fail');
-	    			showNotify("",'Lấy dữ liệu thất bại !','bg-danger');
-	    			hideOverLoading('#detailStudentInfoModal .modal-dialog');
 	    			$('#detailStudentInfoModal').modal('hide');
+	    			hideOverLoading('#detailStudentInfoModal .modal-dialog');
+	    			showNotify("",'Lấy dữ liệu thất bại !','bg-danger');
 	    		}
 	    	});
 
@@ -352,8 +359,6 @@ $(document).ready( function () {
 
 	    	var stuId = $('input[name=pStuId]').val();
 	    	
-
-
 	    	if ( $("#payForm").valid() ) 
 	    	{
 	    		showLargeLoading('#payModal .modal-dialog');
@@ -364,7 +369,7 @@ $(document).ready( function () {
 		    		data: {
 		    			courses: getCourseToPay(),
 		    			stuId: stuId,
-		    			billMonth: $('select[name=billMonth]').val(),
+		    			billMonth: $('input[name=billMonth]').val(),
 		    			billDiscount: $('input[name=billDiscount]').val(),
 		    			billPay: $('input[name=billPay]').val(),
 		    			isExcess: isExcess
@@ -379,10 +384,11 @@ $(document).ready( function () {
 		    				if (typeof error['billMonth'] !== 'undefined')  $('.valid_err_billMonth').text(error['billMonth'][0]);
 		    				if (typeof error['billDiscount'] !== 'undefined')  $('.valid_err_billDiscount').text(error['billDiscount'][0]);
 		    				if (typeof error['billPay'] !== 'undefined')  $('.valid_err_billPay').text(error['billPay'][0]);
+
 		    				if (typeof error['couDuplicate'] !== 'undefined'){
 		    					error['couDuplicate'].forEach(function(value,index){
 		    						var html = '<p class="validation-error-label valid_err_billPay">Lớp này đã đóng tiền học tháng '
-		    							+$('select[name=billMonth]').val()
+		    							+$('input[name=billMonth]').val()
 		    						+'</p>' 
 		    						$('#pCou-'+value+' .payCouName').append(html);
 		    					});
@@ -391,7 +397,6 @@ $(document).ready( function () {
 
 		    				return false;
 		    			}
-
 
 		    			if (data['success'] == true) 
 		    			{
@@ -408,16 +413,16 @@ $(document).ready( function () {
 		    				if( data['data']['stu_wallet'] == 0 ) 
 		    					html = '<p title="Nợ" style="width:70%; font-weight:bold" class="label label-wallet border-left-success label-striped">'
 		    							+Number(data['data']['stu_wallet']).formatnum() +'</p>'  
-
-
-		    				hideOverLoading('#payModal .modal-dialog');
-
-		    				$('#payModal').modal('hide');
+		    				
 		    				$('#stu-' + data['data']['stu_id'] + ' .td-wallet').html(html);
 		    				showNotify("",data['msg'],'bg-success');							
-		    			} else {
-		    				hideOverLoading('#payModal .modal-dialog');
-		    				$('#payModal').modal('hide');
+		    			}
+
+		    			hideOverLoading('#payModal .modal-dialog');
+		    			$('#payModal').modal('hide');
+
+		    			if (data['success'] == false)
+		    			{
 		    				showNotify("",data['msg'],'bg-danger');							
 		    			}
 		    			 
@@ -486,10 +491,13 @@ $(document).ready( function () {
 							$('#stu-'+id).fadeTo(500,0, function(){
 								studentDataTable.rows('#stu-'+id).remove().draw();
 							});
-							hideOverLoading('body');	
-						} else {
+								
+						} 
+						hideOverLoading('body');
+
+						if(!data['success'])
+						{
 							showNotify("",data['msg'],'bg-danger');							
-							hideOverLoading('body');
 						}
 
 						
@@ -507,8 +515,9 @@ $(document).ready( function () {
 
 	    function getStudentInfo(id)
 	    {
-	    	showLargeLoading('#addStudentModal .modal-dialog');
 	    	$('#addStudentModal').modal('show');
+	    	showLargeLoading('#addStudentModal .modal-dialog');
+	    	
 	    	$.ajax({
 	    		url: "{{route('StudentGetOne')}}",
 	    		method: 'POST',
@@ -539,8 +548,8 @@ $(document).ready( function () {
 					    	
 					    	courses.forEach( function(element, index) 
 					    	{
-					    		
-								if ($(listCheckBox[i])[0].value == element['cou_id']) 
+					    		console.log(element['status']);
+								if ($(listCheckBox[i])[0].value == element['cou_id'] && element['status'] == {{App\Model\Register::ACTIVE}}) 
 					  			{
 					  				$(listCheckBox[i]).prop('checked',true);
 					  				flag = true;
@@ -550,12 +559,15 @@ $(document).ready( function () {
 					    	
 					    	if (!flag) { $(listCheckBox[i]).prop('checked',false); }
 					    }
-					    $('#addStudentModal').modal('show');
-					    hideOverLoading('#addStudentModal .modal-dialog'); 
-					    
-	    			} else {
-	    				showNotify("",'Lấy dữ liệu thất bại','bg-danger');
-	    				hideOverLoading('#addStudentModal .modal-dialog');	
+
+					    $('#addStudentModal').modal('show');					    
+	    			} 
+
+	    			hideOverLoading('#addStudentModal .modal-dialog');	
+	    			
+	    			if(data['success'] == false)
+	    			{
+	    				showNotify("",data['msg'],'bg-danger');
 	    				$('#addStudentModal').modal('hide');
 	    			}
 

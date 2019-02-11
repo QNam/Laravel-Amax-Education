@@ -9,6 +9,7 @@ use Validator;
 use App\Model\Course as CourseModel;
 use App\Model\Student as StudentModel;
 use App\Model\Bill as BillModel;
+use App\Model\Register as RegModel;
 use App\Model\DetailBill as DetailBillModel;
 
 class BillController extends Controller
@@ -16,7 +17,6 @@ class BillController extends Controller
 
     public $messages = [
         'billMonth.required' => "Đóng học tháng không được bỏ trống !",
-        'billMonth.numeric'=> "Tháng đóng học phải là số !",
         'billDiscount.numeric' => "Khuyến mãi phải là số !",
         'billDiscount.min' => "Khuyến mãi trong khoảng 0 -> 100% !",
         'billDiscount.max' => "Khuyến mãi trong khoảng 0 -> 100% !",
@@ -27,7 +27,7 @@ class BillController extends Controller
     ];
 
     public $rules = [
-        'billMonth' => "bail|required|numeric",
+        'billMonth' => "bail|required",
         'billPay' => "bail|required|numeric",
         'stuId' => "bail|required|numeric",
         'billDiscount' => "bail|max:100|min:0|numeric"
@@ -48,8 +48,24 @@ class BillController extends Controller
 
         try{
 
-            $data =  $bill->getBillInfo($filter);
+            $data =  $bill->getListBill($filter);
 
+            $allow_update_checker = "";
+
+            foreach ($data as $key => $value) {
+                //Chuyển về từ định dạng trên DB để hiển thị
+                $value['month'] = str_replace('-00','',$value['month']);
+
+                //Chỉ có bill mới nhất ms dc cập nhật
+                if ($allow_update_checker != $value['stu_id']) {
+                    if($bill->billIsFirst($value['stu_id'],$value['bill_id'])) 
+                    {
+                        $data[$key]['allow_update'] = 1;
+                        $allow_update_checker = $value['stu_id'];                    
+                    }
+
+                }
+            }
 
             if ($detail) 
             {
@@ -62,7 +78,8 @@ class BillController extends Controller
                         $total += $v['couTotal'];
                     }
 
-                    $value['cousTotal'] = $total; 
+                    $value['cousTotal'] = $total;
+
                 }
 
 
@@ -84,9 +101,6 @@ class BillController extends Controller
         $data['bills'] = $this->_getDocData([],true);
         $data['courses'] = $course->get(['cou_id','cou_name']);
 
-        // $bill = new BillModel();
-       
-        // dd($data['bills']->links())   ;
         return view('bill/index')->with($data);
     }
 
@@ -163,12 +177,13 @@ class BillController extends Controller
     	$course  = new CourseModel();
         $student = new StudentModel();
         $bill    = new BillModel();
+        $reg    = new RegModel();
         $detailBill    = new DetailBillModel();
 
 
         //Lấy dữ liệu
     	$bCourses  =  $request->input('courses');
-    	$bMonth    =  $request->input('billMonth');
+    	$bMonth    =  $request->input('billMonth').'-00';
     	$bDiscount =  $request->input('billDiscount');
     	$bPay      =  $request->input('billPay');
         $stuId     =  $request->input('stuId');
@@ -182,7 +197,7 @@ class BillController extends Controller
         $bTotal  = 0;
     	$bWallet = 0;
         
-
+        // dd($bMonth);
         // validate
         $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
@@ -194,14 +209,20 @@ class BillController extends Controller
         $cou_duplicate = [];
         foreach ($bCourses as $key => $value) {
 
-            $checker = $bill->courseIsTraded($stuId,$bMonth,$value['couId']);
+            if($reg->isActive($value['couId'],$stuId) ){
+                $checker = $bill->courseIsTraded($stuId,$bMonth,$value['couId']);
 
-
-            if ($checker) {
-                $cou_duplicate[] =  $value['couId'];
+                if ($checker) {
+                    $cou_duplicate[] =  $value['couId'];
+                }
             }
+            
         }
 
+        if($billId != "" && !$bill->billIsFirst($stuId,$billId)) {
+
+            return response()->json(['data'=>[ 'billNotAllowUpdate'=> "Hóa đơn này không được phép Cập nhật !"], 'validate'=>false]);
+        }
 
         if (count($cou_duplicate) > 0 && $billId == "") {
             return response()->json(['data'=>[ 'couDuplicate'=> $cou_duplicate], 'validate'=>false]);
@@ -326,7 +347,9 @@ class BillController extends Controller
                 
                 \DB::commit();
 
-                return response()->json(['msg'=>'Cập nhật thành công !', 'success'=>true,'data'=>['stu_id' => $stuId, 'stu_wallet'=> $bWallet] ]);
+
+                Session::flash('success', 'Cập nhật Hóa đơn thành công !'); 
+                return response()->json(['msg'=>'Cập nhật hóa đơn thành công !', 'success'=>true]);
             } catch(\Exception $e){
                 \DB::rollback();
                 throw $e;

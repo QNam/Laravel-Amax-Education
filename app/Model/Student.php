@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Model\Register as RegModel;
 
 class Student extends Model
 {
@@ -30,5 +31,44 @@ class Student extends Model
                         ->groupBy('student.stu_id')
                         ->orderBy('updated_at','DESC')
                         ->get(['student.*']);
+    }
+
+
+    // public function updateStudent($stu_id,$data)
+    // {
+    //     $reg = new RegModel();
+
+    //     try {
+    //          \DB::beginTransaction();
+    //          $reg->resetRegisterCourse($stu_id);
+
+    //          //.....
+
+    //          $this::where('stu_id' => $stu_id)->update($data);
+    //           \DB::commit();  
+    //     } catch (\Exception $e) {
+    //         \DB::rollback();
+
+    //         return false;
+    //     }
+    // }
+
+
+    public function incrementGradeAllStudent()
+    {
+
+        try{
+            \DB::beginTransaction();
+
+            $this::increment('stu_grade',1);
+            
+            \DB::commit();  
+
+            return true;
+            
+        } catch (\Throwable  $e) {
+            \DB::rollback();
+            return false;
+        }
     }
 }

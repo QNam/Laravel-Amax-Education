@@ -1,4 +1,10 @@
-
+<style>
+	input[name=billMonth].unstyled::-webkit-inner-spin-button,
+	input[name=billMonth].unstyled::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+</style>
 @csrf
 <input type="hidden" name="pStuId"  value="">
 <input type="hidden" name="billId"  value="">
@@ -56,12 +62,7 @@
 							<label for="" >Đóng học tháng: </label>	
 						</div>
 						<div class="col-lg-7">
-							<select name="billMonth" class="form-control" required="true">
-								<option value="">-- Chọn tháng --</option>
-								<?php for ($i=1; $i <= 12; $i++) { ?>
-								<option value="{{$i}}" >{{$i}}</option>	
-								<?php } ?>
-							</select>
+							<input type="month" name="billMonth" class="unstyled form-control" required="true">
 						</div>
 						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 							<p class="validation-error-label valid_err_billMonth"></p>
@@ -74,7 +75,7 @@
 							<label for="" >Khuyến mãi: </label>	
 						</div>
 						<div class="col-lg-7">
-							<input type="number" name="billDiscount" min="0" max="100" value="0" class="form-control col-lg-9 pBillDiscount" onkeyup="createTotalBill()" placeholder="%">	
+							<input type="number" name="billDiscount" min="0" max="100" class="form-control col-lg-9 pBillDiscount" onkeyup="createTotalBill()" placeholder="%">	
 						</div>
 						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 							<p class="validation-error-label valid_err_billDiscount"></p>
@@ -107,7 +108,7 @@
 							<label for="" >Đã đóng: </label>	
 						</div>
 						<div class="col-lg-7">
-							<input type="text" name="billPay" required="true" value="0" onkeyup="createBillNotify()" class="form-control col-lg-9" placeholder="VND">	
+							<input type="text" name="billPay" required="true" onkeyup="createBillNotify()" class="form-control col-lg-9" placeholder="VND">	
 						</div>
 						<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 							<p class="validation-error-label valid_err_billPay"></p>
@@ -156,8 +157,7 @@ $(document).ready(function($) {
 				max:100
 			},
 			"billMonth":{
-				required: true,
-				number: true
+				required: true
 			},
 			"billPay":{
 				required: true,
@@ -177,8 +177,7 @@ $(document).ready(function($) {
 				max: "Giảm giá cao nhất là 100% !"
 			},
 			"billMonth":{
-				required: "Tháng đóng học là bắt buộc !",
-				number: "Tháng đóng học phải là số !"
+				required: "Tháng đóng học là bắt buộc !"
 			},
 			"billPay":{
 				required: 'Tiền đóng học là bắt buộc !',
@@ -192,6 +191,7 @@ $(document).ready(function($) {
 });
 	
 $('#payModal').on('hidden.bs.modal', function () {
+	console.log('payform hidden');
     $('#payModal input').val("");
     $('#payModal select').val("");
     $('#payModal textarea').text("");
@@ -207,11 +207,13 @@ $('#payModal').on('hidden.bs.modal', function () {
 
 $('#payModal').on('show.bs.modal', function () {
     var d = new Date();
-    month = d.getMonth();
-
-	$('input[name=billDiscount]').val("0"),
-	$('input[name=billPay]').val("0"),
-    $('select[name=billMonth] option:eq('+ Number(month + 1)  +')').prop('selected', true);
+    month = Number(d.getMonth() + 1);
+    year = d.getFullYear();
+    var monthFormat = (month != 10 || month != 11 || month != 12) ? "0"+month : month;
+    
+	$('input[name=billDiscount]').val("0");
+	$('input[name=billPay]').val("0");
+    $('input[name=billMonth]').val(year+'-'+monthFormat);
 
 })
 
@@ -293,19 +295,20 @@ $('#payModal').on('show.bs.modal', function () {
 	    				$('.stuWallet').text( Number(student['stu_wallet']).formatnum() );
 
 	    				courses.forEach( function(elem,index){
-
-	    					html = '<tr id="pCou-'+elem['cou_id']+'" class="pCouItem">'
-	    									+'<input type="hidden" class="payCouId" value="'+elem['cou_id']+'">'
-	    									+'<td class="payCouName">'+elem['cou_name']+'</td>'
-											+'<td class="pCouPrice">'+Number(elem['cou_price']).formatnum()+'</td>'
-											+'<td><input type="number" class="form-control pTotalLesson" required="true" name="pTotalLesson[]" onkeyup="createTotalOfCourse('+elem['cou_id']+'); createTotalBill(); "></td>'
-											+'<td><input type="number" class="form-control pCouDiscount" min="0" max="100" value="0" name="pCouDiscount[]" onkeyup="createTotalOfCourse('+elem['cou_id']+'); createTotalBill(); " placeholder="%"></td>'
-											+'<td><input type="text" class="form-control pCouTotal" placeholder="VND" disabled="true"></td>'
-											+'<td class="text-center btn-delete">'
-												+'<a href="#" onclick="removePayCourse('+elem['cou_id']+'); return false;"><i class="icon-bin"></i></a>'
-											+'</td>'
-										+'</tr>'
-							$('#payCourseInfo').append(html)
+	    					if(elem['status'] == {{App\Model\Register::ACTIVE}} ) {
+		    					html = '<tr id="pCou-'+elem['cou_id']+'" class="pCouItem">'
+		    									+'<input type="hidden" class="payCouId" value="'+elem['cou_id']+'">'
+		    									+'<td class="payCouName">'+elem['cou_name']+'</td>'
+												+'<td class="pCouPrice">'+Number(elem['cou_price']).formatnum()+'</td>'
+												+'<td><input type="number" class="form-control pTotalLesson" required="true" name="pTotalLesson[]" onkeyup="createTotalOfCourse('+elem['cou_id']+'); createTotalBill(); "></td>'
+												+'<td><input type="number" class="form-control pCouDiscount" min="0" max="100" value="0" name="pCouDiscount[]" onkeyup="createTotalOfCourse('+elem['cou_id']+'); createTotalBill(); " placeholder="%"></td>'
+												+'<td><input type="text" class="form-control pCouTotal" placeholder="VND" disabled="true"></td>'
+												+'<td class="text-center btn-delete">'
+													+'<a href="#" onclick="removePayCourse('+elem['cou_id']+'); return false;"><i class="icon-bin"></i></a>'
+												+'</td>'
+											+'</tr>'
+								$('#payCourseInfo').append(html)
+							}
 	    				});
 
 	    				hideOverLoading('#payModal .modal-dialog');

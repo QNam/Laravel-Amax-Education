@@ -59,6 +59,12 @@ Route::group(['middleware' => ['auth', 'web']], function() {
 	Route::get('/self', 'UserController@selfUpdateView')->name('SelfIndex');
 	Route::post('/self/store', 'UserController@selfUpdateStore')->name('SelfStore');
 
+	Route::post('/do-update', 'UpdateStudent@doUpdate')->name('doUpdate')->middleware(CheckRole::class);
+
+
+	Route::get('/log', 'StudentLogController@index')->name('LogIndex')->middleware(CheckRole::class);
+
+
 });
 
 

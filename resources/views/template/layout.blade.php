@@ -184,6 +184,9 @@
 									<a href="#" class="has-ul"><i class=" icon-user"></i> <span>Học sinh</span></a>
 									<ul class="has-ul">
 										<li><a href="{{url('student')}}">Danh sách học sinh</a></li>
+										@if(Auth::user()->role == 1)
+										<li><a href="{{route('LogIndex')}}">Lưu trữ Học Sinh</a></li>
+										@endif
 									</ul>
 								</li>
 								<li>
@@ -291,14 +294,33 @@
 						  new PNotify({
 							    title: '',
 					            text: "{{Session::get('info') }}",
-					            addclass: 'bg-info',
-					            delay: 1000,
+					            addclass: 'bg-info stack-bar-bottom',
+					         	width: "50%",
+					            delay: 5000,
 					            icon:''
 							})
 						});
 						
 						
 					</script>
+					@endif
+
+					@if (Session::has('swu_mess'))
+					<script>
+						$( window ).load(function() {
+						  new PNotify({
+							    title: '',
+					            text: "{{Session::get('swu_mess') }}",
+					            addclass: 'bg-info stack-bar-bottom',
+					         	width: "50%",
+					            delay: Number({{App\Model\HistoryUpdate::DELAY_TO_UPDATE * 1000}}),
+					            icon:''
+							})
+						});
+						
+						
+					</script>
+
 					@endif
 
 					@yield('content')
@@ -314,6 +336,7 @@
 		<!-- /page content -->
 
 	</div>
+	<input type="hidden" id="studentWillUpdate" value="{{session('student_will_update')}}">
 	<!-- /page container -->
 	@stack('js-file')
 	
@@ -321,14 +344,58 @@
 	
 	<script>
 		$(document).ready(function(){
-		  $('[data-toggle="tooltip"]').tooltip(); 
+		  	$('[data-toggle="tooltip"]').tooltip(); 
+		  	sendUpdateRequest();
+		  	setTimeout(function(){
+		  		if ( $('#studentWillUpdate').val() == 1 ) 			
+					showLargeLoading('body');
+			},{{App\Model\HistoryUpdate::DELAY_TO_UPDATE * 1000}})
 		});
+
+
+
+
+			function sendUpdateRequest()
+			{
+				  if ( $('#studentWillUpdate').val() == 1 ) 
+				  {	  
+				  	  // showLargeLoading('body');
+					  $.ajax({
+					  	url: '{{ route('doUpdate') }}',
+					  	type: 'POST',
+					  	data: {student_will_update: 1},
+					  	success: function(data){
+					  		if (data['success'] == true) {
+					  			showNotify("",data['msg'],'bg-success');	
+					  		}
+					  		
+					  		hideOverLoading('body');
+
+					  		if (data['success'] == false) {
+					  			showNotify("",data['msg'],'bg-danger');	
+					  		}
+					  	},
+					  	error: function(){
+					  		hideOverLoading('body');
+					  		showNotify("",'Lỗi Gửi dữ liệu, Cập nhật chưa được thực hiện !','bg-danger');				  		
+					  	}
+					  })
+				  }
+			}
+
+		// (function(){
+		// 	setTimeout(,{{App\Model\HistoryUpdate::DELAY_TO_UPDATE * 1000}});
+			
+		// })()
+		
 		
 		$.ajaxSetup({
 	        headers: {
 	            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 	        }
 	    });
+
+	    
 	</script>
 	@stack('js-code')
 	

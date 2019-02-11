@@ -19,7 +19,6 @@ class CourseController extends Controller
         'couTeacher.required' => "Vui lòng chọn một giáo viên",
         'couTeacher.numeric' => "Mã giáo viên phải là số !",
         'couGrade.numeric' => "Khối học phải là số !",
-        'couTime[][].required' => "Thời gian học không được bỏ trống !"
     ];
 
     public $rules = [
@@ -28,7 +27,7 @@ class CourseController extends Controller
         'couGrade' => "numeric",
         'couTeacher' => "bail|required|numeric",
         'couPrice' => "bail|required|numeric",
-        'couTime.*.*' => "required"
+        // 'couTime.*.*' => "bail|required",
     ];
 
  	public function _getDocData($filter = [])
@@ -81,23 +80,7 @@ class CourseController extends Controller
     	$data['subjects'] = $subject::get(['sub_id','sub_name']);
     	$data['teachers'] = $teacher::get(['tea_id','tea_name']);
 
-        // $courseList = &$data['courses'];
-        // foreach ($data['courses'] as &$value) {
-
-        //     foreach ($value['cou_time'] as &$v) 
-        //     {   
-        //         $v['date'] = ($v['date'] == 0) ? "Chủ Nhật" : (int)$v['date'] + 1;    
-        //     }
-        // }
-        // $num_course = count($data['courses']);
-        // for ($i=0; $i < $num_course; $i++) { 
-        //     $num_time = count( $data['courses'][$i]['cou_time'] );
-        //     var_dump($num_time);
-        //     for ($j=0; $j < $num_time; $j++) { 
-        //         $data['courses'][$i]['cou_time'][$j]['date'] = ($data['courses'][$i]['cou_time'][$j]['date'] == 0) ? "Chủ Nhật" : (int)$data['courses'][$i]['cou_time'][$j]['date'] + 1;
-        //     }
-        // }
-        // dd($data['courses']);
+        $courseList = $data['courses'];
 
     	return view('course/index')->with($data);
     }
@@ -127,12 +110,42 @@ class CourseController extends Controller
     	$course = new CourseModel();
         $couTime = $request->input('couTime');
 
+        //Xóa các thời gian chưa được chọn nhưng vẫn gửi lên server vs giá trị null.
         foreach ($couTime as $key => $value) {
+
             if (count($value) < 3 ) 
             {
                 unset($couTime[$key]);    
             }
         }
+
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
+        $error = $validator->errors()->getMessages();
+
+        
+        foreach ($couTime as $key => $value) {
+            if ($value['begin'] == null) 
+            {
+                $error["couTime.{$value['date']}.begin"] = "Thời gian bắt đầu không được bỏ trống  !";                
+            }
+            if ($value['end'] == null) 
+            {
+                $error["couTime.{$value['date']}.end"] = "Thời gian kết thúc không được bỏ trống  !";                
+            }
+
+            if($value['end'] != null && $value['begin'] != null && strtotime($value['begin']) >= strtotime($value['end']) ) 
+            {
+                $error["couTime.{$value['date']}.begin"] = "Thời gian bắt đầu không hơn hoặc bằng thời gian kết thúc";                
+
+            }
+        }
+
+
+
+        if ( count($error) > 0 ) {
+           return redirect()->route('CourseIndex')->withErrors($error)->withInput();
+        }
+
 
         $couTimeTemp = [];
 
@@ -158,11 +171,7 @@ class CourseController extends Controller
 
 
 
-        $validator = Validator::make($request->all(), $this->rules, $this->messages);
-
-        if ( $validator->fails() ) {
-           return redirect()->route('CourseIndex')->withErrors($validator)->withInput();
-        }
+        
         
 
 		if (isset($cou_id)) {
@@ -176,6 +185,7 @@ class CourseController extends Controller
 
             }catch(\Exception $e) 
             {
+
                 Session::flash('error', 'Cập nhật khóa học thất bại !'); 
                 return redirect()->route('CourseIndex');
             }

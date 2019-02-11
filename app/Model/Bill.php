@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\Model\DetailBill as DetailBillModel;
 
+
 class Bill extends Model
 {
     protected $table 		= 	'bill';
@@ -23,7 +24,7 @@ class Bill extends Model
         return $this->hasMany('App\Model\DetailBill','bill_id','detail_bill_id');
     }
 
-     public function getBillInfo($filter = [])
+    public function getListBill($filter = [])
     {
         $bill = new Bill();
 
@@ -34,6 +35,16 @@ class Bill extends Model
                     ->orderBy('created_at', 'DESC')
                     ->select(['bill.*','student.stu_id','student.stu_wallet','student.stu_name'])
                     ->paginate($this->paginate);
+    }
+
+
+    public function billIsFirst($stu_id,$bill_id)
+    {
+        $first = $this::where(['stu_id' => $stu_id])->orderBy('created_at','DESC')->limit(1)->get(['bill_id']);
+
+        if($first[0]->bill_id == $bill_id)
+            return true;
+        return false;
     }
 
     public function getBillOfStudent($stuId)
@@ -85,6 +96,7 @@ class Bill extends Model
 
         return $dBill::where('bill_id',$bill_id)
                     ->join('course','course.cou_id','detail_bill.cou_id')
+                    // ->join('register','course.cou_id','register.cou_id')
                     ->get(['detail_bill.*','course.cou_name']);
     }
 

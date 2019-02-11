@@ -118,7 +118,7 @@
     		dataType: 'json',
     		data: {billId: billId},
     		success: function(data){
-    			console.log(data);
+    			
 
     			if (data['success']) 
     			{
@@ -129,33 +129,37 @@
     				var html = "";
 
     				details.forEach( function(elem,index){
+    					console.log(details);
+    					{{-- if(elem['status'] == {{App\Model\Register::ACTIVE}} ) { --}}
+	    					html = '<tr id="pCou-'+elem['cou_id']+'" class="pCouItem">'
+	    									+'<input type="hidden" class="payCouId" value="'+elem['cou_id']+'">'
+	    									
+	    									+'<td class="payCouName">'+elem['cou_name']+'</td>'
+											
+											+'<td class="pCouPrice">'+Number(elem['cou_price']).formatnum()+' VNĐ </td>'
+											
+											+'<td><input type="number" class="form-control pTotalLesson" required="true" name="pTotalLesson[]" onkeyup="createTotalOfCourse('+elem['cou_id']+'); createTotalBill();" value="'+elem['total_lesson']+'"></td>'
 
-    					html = '<tr id="pCou-'+elem['cou_id']+'" class="pCouItem">'
-    									+'<input type="hidden" class="payCouId" value="'+elem['cou_id']+'">'
-    									
-    									+'<td class="payCouName">'+elem['cou_name']+'</td>'
-										
-										+'<td class="pCouPrice">'+Number(elem['cou_price']).formatnum()+' VNĐ </td>'
-										
-										+'<td><input type="number" class="form-control pTotalLesson" required="true" name="pTotalLesson[]" onkeyup="createTotalOfCourse('+elem['cou_id']+'); createTotalBill();" value="'+elem['total_lesson']+'"></td>'
-
-										+'<td><input type="number" class="form-control pCouDiscount" min="0" max="100" value="0" name="pCouDiscount[]" onkeyup="createTotalOfCourse('+elem['cou_id']+'); createTotalBill();" value="'+elem['discount']+'" placeholder="%"></td>'
-										
-										+'<td><input type="text" class="form-control pCouTotal" placeholder="VND" disabled="true"></td>'
-										
-										+'<td class="text-center btn-delete">'
-											+'<a href="#" onclick="removePayCourse('+elem['cou_id']+'); return false;"><i class="icon-bin"></i></a>'
-										+'</td>'
-									+'</tr>'
-						$('#payCourseInfo').append(html)
-						createTotalOfCourse(elem['cou_id']);
+											+'<td><input type="number" class="form-control pCouDiscount" min="0" max="100" value="0" name="pCouDiscount[]" onkeyup="createTotalOfCourse('+elem['cou_id']+'); createTotalBill();" value="'+elem['discount']+'" placeholder="%"></td>'
+											
+											+'<td><input type="text" class="form-control pCouTotal" placeholder="VND" disabled="true"></td>'
+											
+											+'<td class="text-center btn-delete">'
+												+'<a href="#" onclick="removePayCourse('+elem['cou_id']+'); return false;"><i class="icon-bin"></i></a>'
+											+'</td>'
+										+'</tr>'
+							$('#payCourseInfo').append(html)
+							createTotalOfCourse(elem['cou_id']);
+						// }
     				});
-    				createTotalBill();
 
     				$("input[name=pStuId]").val(data['stu_id']);
-    				$('select[name=billMonth]').val(data['month']);
+    				$('input[name=billMonth]').val(data['month']);
     				$('input[name=billDiscount]').val(data['bill_discount']);
     				$('input[name=billPay]').val(data['bill_pay']);
+    				$('.stuWallet').text(data['old_debt']);
+    				createTotalBill();
+    				createBillNotify();
 
 
     				hideOverLoading('#payModal .modal-dialog');
@@ -192,7 +196,7 @@
 		    			courses: getCourseToPay(),
 		    			stuId: stuId,
 		    			billId: billId,
-		    			billMonth: $('select[name=billMonth]').val(),
+		    			billMonth: $('input[name=billMonth]').val(),
 		    			billDiscount: $('input[name=billDiscount]').val(),
 		    			billPay: $('input[name=billPay]').val(),
 		    			isExcess: isExcess
@@ -207,6 +211,12 @@
 		    				if (typeof error['billMonth'] !== 'undefined')  $('.valid_err_billMonth').text(error['billMonth'][0]);
 		    				if (typeof error['billDiscount'] !== 'undefined')  $('.valid_err_billDiscount').text(error['billDiscount'][0]);
 		    				if (typeof error['billPay'] !== 'undefined')  $('.valid_err_billPay').text(error['billPay'][0]);
+		    				if (typeof error['billNotAllowUpdate'] !== 'undefined')  {
+    							$("#payModal").modal("hide");	
+		    					showNotify("",error['billNotAllowUpdate'],'bg-danger');
+		    				}
+
+		    				console.log(error['billNotAllowUpdate']);
 
 		    				return false;
 		    				
@@ -214,8 +224,7 @@
 
 		    			if (data['success'] == true) 
 		    			{
-		    				$("#payModal").modal("hide");	
-		    				showNotify("",data['msg'],'bg-success');							
+		    				// location.reload();
 		    			} else {
 		    				showNotify("",data['msg'],'bg-danger');							
 		    			}

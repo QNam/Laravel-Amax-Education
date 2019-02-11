@@ -12,8 +12,8 @@
 <script>
 	$(window).load(function(){
 		$('#addCourseModal').modal('show');	
-		 $('.coutime-checkbox').prop('checked',false);
-	    $('.cou-time').css('display','none');
+		 // $('.coutime-checkbox').prop('checked',false);
+	  //   $('.cou-time').css('display','none');
 	});
 	
 </script>
@@ -137,137 +137,38 @@
 					</div>
 
 					<label for="" class="text-bold">Thời gian học</label>
-					<!----------------------------------------------------------------------------------------------->
-					<div class="row form-group">
-						<div class="col-xs-4">
-							<label for="" class="checkbox-container">
-								<input type="checkbox" name='couTime[0][date]' id="inpCouTime0" class="coutime-checkbox" value="0" {{  (old('couTime[0][date]') == 0) ? 'checked' : "" }}> 
-								<label for="inpCouTime0">Chủ Nhật</label>
-							</label>	
-						</div>
-						<div  class="cou-time" style="display: none; {{  (old('couTime[0][date]') == 0) ? 'display: block' : "" }}">
-							<div class="col-lg-4">
-								<input type="time" class="form-control"  name="couTime[0][begin]" value="{{old('couTime')[0]['begin']}}">
-							</div>
 
-							<div class="col-lg-4">
-								<input type="time" name="couTime[0][end]" class="form-control" value="{{old('couTime')[0]['end']}}">
-							</div>
-						</div>
-					</div>
-					<!----------------------------------------------------------------------------------------------->
-					<div class="row form-group">
-						<div class="col-xs-4">
-							<label for="" class="checkbox-container">
-								<input type="checkbox" name='couTime[1][date]' class="coutime-checkbox" value="1" id="inpCouTime1" {{  (old('couTime[1][date]') == 1) ? 'checked' : "" }}> 
-								<label for="inpCouTime1">Thứ 2</label>
-							</label>	
-						</div>
-						<div  class="cou-time" style="display: none; {{ (old('couTime[1][date]') == 1) ? 'display: block' : "" }}">
-							<div class="col-lg-4">
-								<input type="time" class="form-control"  name="couTime[1][begin]" value="{{old('couTime')[1]['begin']}}">
-							</div>
-
-							<div class="col-lg-4">
-								<input type="time" name="couTime[1][end]" class="form-control" value="{{old('couTime')[1]['end']}}">
-							</div>
-						</div>
-					</div>
-					<!----------------------------------------------------------------------------------------------->
+					<?php for($i = 0; $i < 7; $i++ ) {?>
 					
 					<div class="row form-group">
 						<div class="col-xs-4">
 							<label for="" class="checkbox-container">
-								<input type="checkbox" name='couTime[2][date]' class="coutime-checkbox" value="2" id="inpCouTime2" {{  (old('couTime[2][date]') == 2) ? 'checked' : "" }}> 
-								<label for="inpCouTime2">Thứ 3</label>
+								<input type="checkbox" name='couTime[{{$i}}][date]' class="coutime-checkbox" value="{{$i}}" id="inpCouTime{{$i}}" 
+								{{  ((int)old("couTime.{$i}.date") === $i  ) ? 'checked' : "" }}> 
+								<label for="inpCouTime{{$i}}">{{$i == 0 ? "Chủ Nhật" : "Thứ ".($i+1)}}</label>
 							</label>	
 						</div>
-						<div  class="cou-time" style="display: none; {{  (old('couTime[2][date]') == 2) ? 'display: block' : "" }}">
+
+						{{-- === vì tránh trường hợp tự động ép kiểu từ null về 0 --}}
+						<div  class="cou-time" style="display: none; {{  (int)old("couTime.{$i}.date") === $i ? 'display: block;' : "" }}
+							@if( isset($errors->getMessages()["couTime.{$i}.begin"]) )
+								{{'display: block'}}
+							@endif 
+						">
 							<div class="col-lg-4">
-								<input type="time" class="form-control"  name="couTime[2][begin]" value="{{old('couTime')[2]['begin']}}">
+								<input type="time" class="form-control"  name="couTime[{{$i}}][begin]" value="{{old('couTime')[$i]['begin']}}">
+								{!! $errors->first("couTime.{$i}.begin", '<label class="error">:message</label>') !!}
 							</div>
 
 							<div class="col-lg-4">
-								<input type="time" name="couTime[2][end]" class="form-control" alue="{{old('couTime')[2]['end']}}">
-							</div>
-						</div>
-					</div>
-					<!----------------------------------------------------------------------------------------------->
-					
-					<div class="row form-group">
-						<div class="col-xs-4">
-							<label for="" class="checkbox-container">
-								<input type="checkbox" name='couTime[3][date]' class="coutime-checkbox" value="3" id="inpCouTime3" {{  (old('couTime[3][date]') == 3) ? 'checked' : "" }}> 
-								<label for="inpCouTime3">Thứ 4</label>
-							</label>	
-						</div>
-						<div  class="cou-time" style="display: none; {{  (old('couTime[3][date]') == 3) ? 'display: block' : "" }}">
-							<div class="col-lg-4">
-								<input type="time" class="form-control"  name="couTime[3][begin]" value="{{old('couTime')[3]['begin']}}">
-							</div>
+								<input type="time" name="couTime[{{$i}}][end]" class="form-control" value="{{old('couTime')[$i]['end']}}">
+								{!! $errors->first("couTime.{$i}.end", '<label class="error">:message</label>') !!}
 
-							<div class="col-lg-4">
-								<input type="time" name="couTime[3][end]" class="form-control" alue="{{old('couTime')[3]['end']}}">
-							</div>
-						</div>
-					</div>
-					<!----------------------------------------------------------------------------------------------->
-					
-					<div class="row form-group">
-						<div class="col-xs-4">
-							<label for="" class="checkbox-container">
-								<input type="checkbox" name='couTime[4][date]' class="coutime-checkbox" value="4" id="inpCouTime4" {{  (old('couTime[4][date]') == 4) ? 'checked' : "" }}> 
-								<label for="inpCouTime4">Thứ 5</label>
-							</label>	
-						</div>
-						<div  class="cou-time" style="display: none; {{  (old('couTime[4][date]') == 4) ? 'display: block' : "" }}">
-							<div class="col-lg-4">
-								<input type="time" class="form-control"  name="couTime[4][begin]" value="{{old('couTime')[4]['begin']}}" >
-							</div>
-
-							<div class="col-lg-4">
-								<input type="time" name="couTime[4][end]" class="form-control" alue="{{old('couTime')[4]['end']}}">
-							</div>
-						</div>
-					</div>
-					<!----------------------------------------------------------------------------------------------->
-					
-					<div class="row form-group">
-						<div class="col-xs-4">
-							<label for="" class="checkbox-container">
-								<input type="checkbox" name='couTime[5][date]' class="coutime-checkbox" value="5" id="inpCouTime5" {{  (old('couTime[5][date]') == 5) ? 'checked' : "" }}> 
-								<label for="inpCouTime5">Thứ 6</label>
-							</label>	
-						</div>
-						<div  class="cou-time" style="display: none; {{  (old('couTime[5][date]') == 5) ? 'display: block' : "" }}">
-							<div class="col-lg-4">
-								<input type="time" class="form-control"  name="couTime[5][begin]" value="{{old('couTime')[5]['begin']}}">
-							</div>
-
-							<div class="col-lg-4">
-								<input type="time" name="couTime[5][end]" class="form-control" alue="{{old('couTime')[5]['end']}}">
-							</div>
-						</div>
-					</div>
-					<!----------------------------------------------------------------------------------------------->
-					
-					<div class="row form-group">
-						<div class="col-xs-4">
-							<input type="checkbox" name='couTime[6][date]' class="coutime-checkbox" value="6" id="inpCouTime6" {{  (old('couTime[6][date]') == 6) ? 'checked' : "" }}>
-							<label for="inpCouTime6">Thứ 7</label>	
-						</div>
-						<div  class="cou-time" style="display: none; {{  (old('couTime[6][date]') == 6) ? 'display: block' : "" }}">
-							<div class="col-lg-4">
-								<input type="time" class="form-control"  name="couTime[6][begin]" value="{{old('couTime')[6]['begin']}}">
-							</div>
-
-							<div class="col-lg-4">
-								<input type="time" name="couTime[6][end]" class="form-control" alue="{{old('couTime')[6]['end']}}">
 							</div>
 						</div>
 					</div>
 
-
+					<?php } ?>
 
 
 					<div class="row form-group">
@@ -284,7 +185,7 @@
 							<select name="couGrade" id="" class="form-control">
 								<option value="">-- Chọn khối --</option>
 								<?php for($i = 1; $i <= 12; $i++) { ?>		
-								<option value="{{$i}}" {{ old('couPrice') == $i ? "select" : "" }}>{{$i}}</option>
+								<option value="{{$i}}" {{ old('couGrade') == $i ? "Selected" : "" }}>{{$i}}</option>
 								<?php } ?>
 							</select>
 							{!! $errors->first('couGrade', '<label class="error">:message</label>') !!}
@@ -354,6 +255,9 @@
 
 @push('js-code')
 <script>
+	$('.coutime-checkbox').on('change',function(event) {
+		$(this).parent().parent().parent().find('.cou-time').toggle();
+	})
 	var viewCourseDataTable;
 
 	function setViewCourseDT()
@@ -372,18 +276,8 @@
 	}
 
 	$('#modalViewCourse').on('hidden.bs.modal', function () {
-		// $('#modalViewCourse table tbody').html(" ");
+		$('#modalViewCourse table tbody').html(" ");
 	   viewCourseDataTable.destroy();
-	});
-
-	$('.coutime-checkbox').change(function(event) {
-
-		if ( $(this).prop('checked') ) {
-			$(this).parent().parent().parent().find('.cou-time').css('display', 'block');	
-		} else {
-			$(this).parent().parent().parent().find('.cou-time').css('display', 'none');	
-		}
-		
 	});
 
 	$('#addCourseModal').on('hidden.bs.modal', function () {
@@ -415,6 +309,7 @@
     				{
     					course['cou_time'].forEach(function(value,index)
     					{ 
+
 							$('input[ name="couTime[' + value['date'] + '][date]" ]').prop('checked', true);				    							
 							$('input[ name="couTime[' + value['date'] + '][date]" ]').parent().parent().parent().find('.cou-time').css('display', 'block');	
 
@@ -488,7 +383,9 @@
 							courseDataTable.rows('#cou-'+id).remove().draw();
 						});
 
-	    			} else {
+	    			}  
+
+	    			if (!data['success']){
 						showNotify("",data['msg'],'bg-danger');	    				
 	    			}
 	    			

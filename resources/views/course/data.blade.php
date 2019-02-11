@@ -20,10 +20,10 @@
 					<td class="w-5">{{ $course->sub_name }} {{ " - ".$course->cou_grade }}</td>
 					<td>
 						@foreach($course['cou_time'] as $couTime)
-							<p>{{ $couTime['date']}}, Từ {{$couTime['begin']}} đến {{$couTime['end']}}</p>
+							<p>{!! ($couTime['date'] == 0) ? 'Chủ Nhật' : 'Thứ '.((int)$couTime['date'] + 1) !!}, Từ {{$couTime['begin']}} đến {{$couTime['end']}}</p>
 						@endforeach
 					</td>
-					<td>{{ $course->cou_price }}</td>
+					<td>{{ number_format($course->cou_price,'0',',','.').' VNĐ/buổi' }}</td>
 					<td class="text-center w-5">{{ $course->num_student }}</td>
 					<td class="w-15">						
 						<button type="button" class="btn btn-primary" onclick="getStudentOfCourse({{ $course->cou_id }});">

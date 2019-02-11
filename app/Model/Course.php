@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\Model\Teacher as TeacherModel;
 use App\Model\Register as RegModel;
+use App\Model\Bill as BillModel;
 
 class Course extends Model
 {
@@ -17,7 +18,7 @@ class Course extends Model
         'cou_id', 'cou_name','cou_teacher', 'cou_subject', 'cou_price','cou_desc','cou_class','cou_start','cou_end','cou_grade','cou_date'
     ];
 
-
+   
 
     public function getCourseInfo($filter = [])
     {
@@ -46,6 +47,36 @@ class Course extends Model
     					->get(['course.*','tea_name']);
     }
 
+
+    public function getBaseCourseOfStudent($stu_id)
+    {   
+        $reg = new RegModel();
+
+        return $reg::where('stu_id',$stu_id)->get();
+    }
+
+
+    public function setRegisterToUnactive($cou_id)
+    {
+        $reg = new RegModel();
+
+        return $reg::where('cou_id',$cou_id)->update(['status' => $reg::LOCK]);
+    }
+
+    public function courseHasTraded($cou_id,$stu_id)
+    {
+        $bill = new BillModel();
+
+        $counter = $bill::where(['detail_bill.cou_id' => $cou_id,'bill.stu_id' => $stu_id ])
+                    ->join('detail_bill','bill.bill_id','detail_bill.bill_id')
+                    ->count();
+
+        if($counter > 0) return true;
+        return false; 
+    }
+
+
+
     public function getCourseOfStudent($stu_id)
     {
         $course = new Course();
@@ -55,7 +86,7 @@ class Course extends Model
                         ->join('teacher','course.cou_teacher','teacher.tea_id')
                         ->join('subject','course.cou_subject','subject.sub_id')
                         ->where('student.stu_id', $stu_id)
-                        ->get(['course.*','tea_name','sub_name']);
+                        ->get(['course.*','register.status','tea_name','sub_name']);
 
     }
 

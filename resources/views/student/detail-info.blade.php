@@ -20,6 +20,7 @@
 				<th>Tên lớp</th>
 				<th>Giáo viên</th>
 				<th>Môn</th>
+				<th>Tình trạng</th>
 			</thead>
 			<tbody>
 				@foreach($student['courses'] as $course)
@@ -27,6 +28,9 @@
 					<td>{{$course->cou_name}}</td>
 					<td>{{$course->tea_name}}</td>
 					<td>{{$course->sub_name}}</td>
+					<td class="{{$course->status != App\Model\Register::ACTIVE ? 'text-danger' : ""}}">
+						{{$course->status == App\Model\Register::ACTIVE ? "ĐANG HỌC" : 'ĐÃ THÔI HỌC - '.$course->updated_at}}
+					</td>
 				</tr>
 				@endforeach
 			</tbody>
