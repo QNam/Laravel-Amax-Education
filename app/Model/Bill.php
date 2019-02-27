@@ -37,6 +37,30 @@ class Bill extends Model
                     ->paginate($this->paginate);
     }
 
+    public function getDebtOfBill($billId)
+    {
+        $bill = $this::where('bill_id',$billId)->get(['bill_pay','bill_total']);
+
+        if ( isset($bill[0]) ) return $bill[0]['bill_pay'] - $bill[0]['bill_total'];
+        return false;
+    }
+
+    public function getOneBill($billId, $select = ['*'])
+    {
+        $bill = $this::where('bill_id',$billId)->get($select);
+
+        if ( isset($bill[0]) ) return $bill[0];
+        return false; 
+    }
+    public function calcDebtOfBill($billId)
+    {
+        $bill = $this::where('bill_id',$billId)->get();
+        
+        if ( isset($bill[0]) )
+            return $bill[0]['bill_pay'] - $bill[0]['bill_total'];
+        return $billId;
+    }
+
 
     public function billIsFirst($stu_id,$bill_id)
     {
@@ -74,15 +98,15 @@ class Bill extends Model
 
     public function courseIsTraded($stuId,$month,$couId)
     {
-        $bill = new Bill();
 
-        $counterBill = $bill::where(['stu_id' => $stuId, 'month' => $month])->count();
+        // $counterBill = $this::where(['stu_id' => $stuId, 'month' => $month])->count();
 
-        if($counterBill == 0) return false;
+        // if($counterBill == 0) return false;
         
 
-        $counter = $bill::where(['stu_id' => $stuId, 'month' => $month, 'detail_bill.cou_id' => $couId])
+        $counter = $this::where(['bill.stu_id' => $stuId, 'month' => $month, 'register.cou_id' => $couId])
                     ->join('detail_bill','detail_bill.bill_id','bill.bill_id')
+                    ->join('register','register.reg_id','detail_bill.reg_id')
                     ->count();
         if($counter > 0) return true;
         return false;
@@ -95,9 +119,9 @@ class Bill extends Model
         $dBill = new DetailBillModel();
 
         return $dBill::where('bill_id',$bill_id)
-                    ->join('course','course.cou_id','detail_bill.cou_id')
-                    // ->join('register','course.cou_id','register.cou_id')
-                    ->get(['detail_bill.*','course.cou_name']);
+                    ->join('register','detail_bill.reg_id','register.reg_id')
+                    ->join('course','register.cou_id','course.cou_id')
+                    ->get(['detail_bill.*','course.cou_name','course.cou_id']);
     }
 
 

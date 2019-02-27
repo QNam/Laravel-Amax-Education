@@ -115,10 +115,9 @@
     	$.ajax({
     		url: '{{route('BillGetOne')}}',
     		type: 'POST',
-    		dataType: 'json',
     		data: {billId: billId},
     		success: function(data){
-    			
+    			console.log(data);
 
     			if (data['success']) 
     			{
@@ -129,7 +128,7 @@
     				var html = "";
 
     				details.forEach( function(elem,index){
-    					console.log(details);
+    					
     					{{-- if(elem['status'] == {{App\Model\Register::ACTIVE}} ) { --}}
 	    					html = '<tr id="pCou-'+elem['cou_id']+'" class="pCouItem">'
 	    									+'<input type="hidden" class="payCouId" value="'+elem['cou_id']+'">'
@@ -158,6 +157,10 @@
     				$('input[name=billDiscount]').val(data['bill_discount']);
     				$('input[name=billPay]').val(data['bill_pay']);
     				$('.stuWallet').text(data['old_debt']);
+
+    				if (data['isExcess'] == 1) {
+    					$('input[name=isExcess]').prop('checked',true);
+    				}
     				createTotalBill();
     				createBillNotify();
 
@@ -224,7 +227,7 @@
 
 		    			if (data['success'] == true) 
 		    			{
-		    				// location.reload();
+		    				location.reload();
 		    			} else {
 		    				showNotify("",data['msg'],'bg-danger');							
 		    			}

@@ -285,6 +285,8 @@ $('#payModal').on('show.bs.modal', function () {
 	    		},
 	    		success: function(data){
 
+	    			console.log(data);
+	    			
 	    			if (data['success'] == true) 
 	    			{
 	    				$('input[name=pStuId]').val(stu_id);

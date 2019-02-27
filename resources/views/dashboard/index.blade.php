@@ -16,6 +16,13 @@
 	
 </script>
 @endif
+<script>
+
+	console.log(rewriteUrl(window.location.search))
+	
+
+    
+</script>
 {{-- <div class="panel panel-flat">
 	<div class="panel-heading">
 		<h6 class="panel-title">Thống kê<a class="heading-elements-toggle"><i class="icon-more"></i></a></h6>

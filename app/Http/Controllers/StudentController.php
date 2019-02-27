@@ -53,6 +53,7 @@ class StudentController extends Controller
         try{
             $data =  $student->getStudentInfo($filter);
 
+
             if ($detail) 
             {
                 foreach ($data as $key => $value) {
@@ -63,6 +64,9 @@ class StudentController extends Controller
                     $value['bills'] = $bill->getBillOfStudent($value['stu_id']);
                 }
             }
+
+            // dd($data);
+            
         } catch(\Exception $e){
             throw $e;
         }
@@ -76,6 +80,8 @@ class StudentController extends Controller
         $student = new StudentModel();
         $course  = new CourseModel();
         $reg = new RegModel();
+
+        // dd($reg->getOneRegId(1,535) );
 
         $data['students'] = $this->_getDocData([]);
         
@@ -134,16 +140,16 @@ class StudentController extends Controller
         // $couId = $request->input('couId');
         $filter = ['student.stu_id' => $id/*, 'course.cou_id' => $couId*/];
 
-
         $data =  $this->_getDocData($filter,true);
+
 
         if ( count($data) == 0 ) {
             return response()->json(['msg'=>'Không tìm thấy thông tin học sinh !', 'success'=>false]);
         }
 
+
         if ($detail) 
         {
-            // dd($data);
             $html = view('student/detail-info')->with('student',$data[0])->render();  
 
             return response()->json(['msg'=>'Thành công !', 'success'=>true, 'data' => $html]);
@@ -204,6 +210,7 @@ class StudentController extends Controller
         }
     } 
 
+
     public function editStudentName(Request $request)
     {
         $stu_id = $request->input('pk');
@@ -261,11 +268,7 @@ class StudentController extends Controller
                 return redirect()->route('StudentIndex');
            }
 
-        } 
-        else {
-
-           
-
+        } else {
             
             $rulesU    = ['stuId' => 'required|numeric'];
             $messagesU = ['stuId.required' => 'Lỗi hệ thống ! Liên lạc với kỹ thuật viên',
@@ -290,12 +293,12 @@ class StudentController extends Controller
                     ]);
 
                 // $reg::where('stu_id',$student->stu_id)->delete();
-                $reg->resetRegisterCourse($student->stu_id);
 
+                $reg->resetRegisterCourse($student->stu_id);
 
                 foreach ($inpCourse as $key => $value) {
 
-                    if ($reg->hasTraded($student->stu_id,$value) > 0) 
+                    if ( $course->courseHasTraded($value,$student->stu_id) ) 
                     {
                         $reg::where(['stu_id' => $student->stu_id,'cou_id' => $value])->update(['status'=> $reg::ACTIVE]);   
                     } else {

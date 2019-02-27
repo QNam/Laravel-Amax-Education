@@ -16,8 +16,8 @@ class Register extends Model
     public 	  $incrementing = 	true;
     protected $fillable = ['cou_id', 'stu_id','status'];
 
-     public const ACTIVE = '1';
-    public const LOCK = '0';
+    public const ACTIVE = '1';
+    public const LOCK   = '0';
 
     public function isRegister($stuId,$couId)
     {
@@ -27,24 +27,25 @@ class Register extends Model
         return $checker;
     }
 
+
+    public function getOneRegId($cou_id,$stu_id)
+    {
+        $checker = $this::where(['cou_id' => $cou_id,'stu_id' => $stu_id])->get(['reg_id']);
+
+        if( isset($checker[0]->reg_id) )
+            return $checker[0]->reg_id;
+        return false;        
+    }
+
     public function isActive($couId,$stuId)
     {
         $checker = $this::where(['cou_id'=>$couId,'stu_id' => $stuId])
                     ->get(['status']);
 
-        if(isset($checker[0]) && $checker[0]->status == $this::ACTIVE) return true;
+        if(isset($checker[0]->status) && $checker[0]->status == $this::ACTIVE) return true;
         return false;
     }
 
-    public function hasTraded($stuId,$couId)
-    {
-        $checker = $this::where(['register.stu_id'=> $stuId, 'detail_bill.cou_id' => $couId])
-                        ->join('bill','bill.stu_id','register.stu_id')
-                        ->join('detail_bill','detail_bill.bill_id','bill.bill_id')
-                        ->count();
-
-        return $checker;
-    }
 
     public function resetRegisterCourse($stu_id)
     {
@@ -62,23 +63,5 @@ class Register extends Model
         }
 
     }
-    // public function getCourseOfStudent($filter = [],$detail = false)
-    // {
-    // 	$student = new StudentModel();
 
-    //     $data = $student::where($filter)
-    //                     ->join('register','student.stu_id','register.stu_id')
-    //                     ->join('course','course.cou_id','register.cou_id')
-    //                     ->join('teacher','teacher.tea_id','course.cou_teacher')
-    //                     ->join('subject','subject.sub_id','course.cou_subject')
-    //                     ->select('student.*')
-    //                     ->get(); 
-
-    //     if ($detail) 
-    //     {
-    //         $data = 
-    //     }  
-
-    	
-    // }
 }

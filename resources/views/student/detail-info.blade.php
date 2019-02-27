@@ -31,6 +31,7 @@
 					<td class="{{$course->status != App\Model\Register::ACTIVE ? 'text-danger' : ""}}">
 						{{$course->status == App\Model\Register::ACTIVE ? "ĐANG HỌC" : 'ĐÃ THÔI HỌC - '.$course->updated_at}}
 					</td>
+						
 				</tr>
 				@endforeach
 			</tbody>
@@ -54,6 +55,7 @@
 		
 	</thead>
 	<tbody id="listBillData">
+		@if(count($student['bills']) > 0)
 		@foreach($student['bills'] as $bill)
 
 		<tr class="cursor-pointer" id="bill-{{$bill->bill_id}}" data-popup="tooltip" title="Click để biết thông tin chi tiết" >
@@ -130,6 +132,7 @@
 		</tr>
 
 		@endforeach
+		@endif
 	</tbody>
 </table>
 <script>

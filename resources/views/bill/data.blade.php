@@ -40,13 +40,13 @@
 					</button>
 				@endif
 
-				<form action="{{route('BillDelete')}}" method="POST" style="display: inline;">
-					@csrf
-					<input type="hidden" name="billId" value="{{$bill->bill_id}}">
-					<button type="submit" class="btn btn-danger">
-						<i class="icon-bin"></i>
-					</button>
-				</form>
+					
+				<button type="button" class="btn btn-danger" onclick="createFormdelete(this)" data-toggle="modal" href='#submitDeleteModel'>
+					<i class="icon-bin"></i>
+					<input type="hidden" name="billIdtmp" value="{{$bill->bill_id}}">
+					<input type="hidden" name="stuIdtmp" value="{{$bill->stu_id}}">
+				</button>
+				
 						
 			</td>
 		</tr>
@@ -72,10 +72,10 @@
 								<p><span class="text-bold">Ngày lập: </span>{{$bill->created_at}}</p>
 							</div>
 							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"
-								<p><span class="text-bold">Thừa/thiếu trước đó: </span>{{$old_debt}}</p>
+								<p><span class="text-bold">Thừa/thiếu trước đó: </span>{{$old_debt}} VNĐ</p>
 								<p><span class="text-bold">Khuyến mãi: </span>{{ $bill->bill_discount }} %</p>
-								<p><span class="text-bold">Tổng tiền: </span>{{$bill_total}}</p>								
-								<p><span class="text-bold">Thực thu: </span>	{{$bill_pay}}</p>
+								<p><span class="text-bold">Tổng tiền: </span>{{$bill_total}} VNĐ</p>								
+								<p><span class="text-bold">Thực thu: </span>	{{$bill_pay}} VNĐ</p>
 								<p><span class="text-bold">Trả lại: </span>	
 									{{ ($bill->isExcess == "0" && $bill->bill_pay > $bill->bill_total) ? $billExcess : "Không" }}
 								</p>
@@ -126,12 +126,47 @@
 {{ $bills->links() }}	
 </div>
 
+<div class="modal fade" id="submitDeleteModel">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Xóa hóa đơn</h4>
+			</div>
+			<div class="modal-body">
+
+				<h4>Bạn chắc chắn xóa hóa đơn? Chọn 1 trong 2 hình thức sau để xóa.</h4>
+				<form action="{{route('BillDelete')}}" id="confirmDeleteBill" method="POST">
+					@csrf
+					<input type="hidden" name="billId" value="">
+					<input type="hidden" name="typeDelete" value="0">
+					<button type="button" class="btn btn-block btn-default" onclick="submitDelete(0)">Xóa hóa đơn, Không xóa nợ/dư</button>
+					<button type="button" class="btn btn-block btn-danger" onclick="submitDelete(1)">Xóa hóa đơn, Có xóa nợ/dư</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+
 <script>
 	function openDiv(id){
 	    // $('.detail-bill-item').toggle();
 	    $("#detail-bill-"+id).toggle();
-	    vCreateTotalOfCourse(id);
     }
 	
+
+	function submitDelete(typeDelete)
+	{
+		$('input[name=typeDelete]').val(typeDelete);
+		$('#confirmDeleteBill').submit();		
+	}
+
+	function createFormdelete(item)
+	{
+		var billId = $(item).find('input[name=billIdtmp]').val();
+
+		$('#confirmDeleteBill input[name=billId]').val(billId);
+	}
 
 </script>

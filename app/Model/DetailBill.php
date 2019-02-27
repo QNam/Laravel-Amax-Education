@@ -10,7 +10,7 @@ class DetailBill extends Model
     public $timestamps 		= 	false;
     public 	  $incrementing = 	true;
     protected $fillable = [
-        'bill_id', 'cou_id','discount','total_lesson','cou_price'
+        'bill_id', 'reg_id','discount','total_lesson','cou_price'
     ];
 
     public function bill()

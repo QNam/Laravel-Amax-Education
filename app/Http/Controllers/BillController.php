@@ -87,6 +87,7 @@ class BillController extends Controller
 
         } catch(\Exception $e){
             // throw $e;
+            return [];
         }
 
         return $data;
@@ -100,6 +101,9 @@ class BillController extends Controller
 
         $data['bills'] = $this->_getDocData([],true);
         $data['courses'] = $course->get(['cou_id','cou_name']);
+        $bill = new BillModel();
+        // dd($bill->getOneBill(79,['*']));
+        
 
         return view('bill/index')->with($data);
     }
@@ -153,18 +157,39 @@ class BillController extends Controller
 
     public function deleteBill(Request $request)
     {
+
         $billId = $request->input('billId');
+        $type = $request->input('typeDelete');
+
         $bill = new BillModel();
         $dBill = new DetailBillModel();
+        $student = new StudentModel();
+
+        $billInfo = $bill->getOneBill($billId,['*']);
 
         try{
+            \DB::beginTransaction();
+            $debt = $bill->calcDebtOfBill($billId);
+
             $dBill::where('bill_id',$billId)->delete();
             $bill::where('bill_id',$billId)->delete();
+           
+           if ($type == 1 ) 
+           {
+               $student::where('stu_id',$billInfo->stu_id)->decrement('stu_wallet',(int)$debt);
+           }
+            
+            \DB::commit();            
 
             Session::flash('success', 'Xóa hóa đơn thành công !'); 
             return redirect()->route('BillIndex');   
-        } catch(\Exception $e) {
             
+            
+            
+        } catch(\Exception $e) {
+            \DB::rollback(); 
+
+            throw $e;           
             Session::flash('error', 'Xóa hóa đơn thất bại !'); 
             return redirect()->route('BillIndex'); 
 
@@ -177,7 +202,7 @@ class BillController extends Controller
     	$course  = new CourseModel();
         $student = new StudentModel();
         $bill    = new BillModel();
-        $reg    = new RegModel();
+        $reg     = new RegModel();
         $detailBill    = new DetailBillModel();
 
 
@@ -209,7 +234,8 @@ class BillController extends Controller
         $cou_duplicate = [];
         foreach ($bCourses as $key => $value) {
 
-            if($reg->isActive($value['couId'],$stuId) ){
+            if($reg->isActive($value['couId'],$stuId) )
+            {
                 $checker = $bill->courseIsTraded($stuId,$bMonth,$value['couId']);
 
                 if ($checker) {
@@ -234,16 +260,16 @@ class BillController extends Controller
         if ($billId != "") 
         {
             $oBill    = $this->_getDocData(['bill.bill_id' => $billId]);
-            $oBill_pay = $oBill[0]['bill_pay'];
-            $oBill_total = $oBill[0]['bill_total'];
+            // $oBill_pay = $oBill[0]['bill_pay'];
+            // $oBill_total = $oBill[0]['bill_total'];
 
-            $oBill_debt = $oBill_pay - $oBill_total;
+            // $oBill_debt = $oBill_pay - $oBill_total;
 
-            $oStudent_wallet = $stuWallet - $oBill_debt;
+            // $oStudent_wallet = $stuWallet - $oBill_debt;
 
-             $student::where('stu_id',$stuId)->update(['stu_wallet' => $oStudent_wallet]);
+            //  $student::where('stu_id',$stuId)->update(['stu_wallet' => $oStudent_wallet]);
 
-             $stuWallet = $student::where('stu_id',$stuId)->get(['stu_wallet'])['0']['stu_wallet'];
+            $stuWallet = $oBill[0]['old_debt'];
 
             // dd($oStudent_wallet);
         }
@@ -294,7 +320,8 @@ class BillController extends Controller
             }
     		
     	}catch(\Exception $e) {
-    		return response()->json(['msg'=>'Dữ liệu bị lỗi !', 'success'=>false]);
+            throw $e;
+    		return response()->json(['msg'=>'Dữ liệu bị lỗi !?', 'success'=>false]);
     	}
 
        
@@ -316,33 +343,29 @@ class BillController extends Controller
                               'new_debt'      =>  $bWallet,
                               'isExcess'      =>  $isExcess]);
 
-                \DB::commit();
-
-            } catch(\Exception $e) {
-                \DB::rollback();
-                throw $e;
-                return response()->json(['msg'=>'Có lỗi trong quá trình xử lý !', 'success'=>false]);
-            }
-
-
-            //tạo chi tiết hóa đơn
-            try{
+               
                 
-                \DB::beginTransaction();
-
                 $detailBill::where('bill_id',$billId)->delete();
 
                 foreach ($bCourses as $key => $value) {
-                    $data = [
-                        'bill_id'       => $billId,
-                        'cou_id'        => $bCourses[$key]['couId'],
-                        'total_lesson'  => $bCourses[$key]['totalLesson'],
-                        'discount'      => $bCourses[$key]['couDiscount'],
-                        'cou_price'     => $bCourses[$key]['cou_price']
-                    ];
+                    $reg_id = $reg->getOneRegId($bCourses[$key]['couId'],$stuId);
 
-                    $detailBill = new DetailBillModel($data);
-                    $detailBill->save();
+                    if ( $reg_id != false ) {
+                        $data = [
+                            'bill_id'       => $billId,
+                            'reg_id'        => $reg_id,
+                            'total_lesson'  => $bCourses[$key]['totalLesson'],
+                            'discount'      => $bCourses[$key]['couDiscount'],
+                            'cou_price'     => $bCourses[$key]['cou_price']
+                        ];
+
+                        $detailBill = new DetailBillModel($data);
+                        $detailBill->save();
+                        \DB::commit();
+                    } else {
+                        \DB::rollback();
+                        return response()->json(['msg'=>'Có lỗi trong quá trình xử lý !?', 'success'=>false]);
+                    }
                 }
                 
                 \DB::commit();
@@ -364,10 +387,11 @@ class BillController extends Controller
         if ($billId == "") 
         {
                     //tạo hóa đơn
-            try{
 
-                \DB::beginTransaction();
+            //tạo chi tiết hóa đơn
+            try{
                 
+                \DB::beginTransaction();
                 $student::where('stu_id',$stuId)->update(['stu_wallet'=> $bWallet]);
 
                 $bill->bill_discount =  $bDiscount;
@@ -381,37 +405,36 @@ class BillController extends Controller
 
                 
                 $bill->save();
-                \DB::commit();
-
-            } catch(\Exception $e) {
-                \DB::rollback();
-                return response()->json(['msg'=>'Có lỗi trong quá trình xử lý !', 'success'=>false]);
-            }
-
-
-            //tạo chi tiết hóa đơn
-            try{
-                
-                \DB::beginTransaction();
 
                 foreach ($bCourses as $key => $value) {
-                    $data = [
-                        'bill_id'       => $bill->bill_id,
-                        'cou_id'        => $bCourses[$key]['couId'],
-                        'total_lesson'  => $bCourses[$key]['totalLesson'],
-                        'discount'      => $bCourses[$key]['couDiscount'],
-                        'cou_price'     => $bCourses[$key]['cou_price']
-                    ];
 
-                    $detailBill = new DetailBillModel($data);
-                    $detailBill->save();
+                    $reg_id = $reg->getOneRegId($bCourses[$key]['couId'],$stuId);
+
+                    if ( $reg_id != false ) {
+
+                        $data = [
+                            'bill_id'       => $bill->bill_id,
+                            'reg_id'        => $reg_id,
+                            'total_lesson'  => $bCourses[$key]['totalLesson'],
+                            'discount'      => $bCourses[$key]['couDiscount'],
+                            'cou_price'     => $bCourses[$key]['cou_price']
+                        ];
+
+
+                        $detailBill = new DetailBillModel($data);
+                        $detailBill->save();
+                        \DB::commit();
+                    } else {
+                        \DB::rollback();
+                        return response()->json(['msg'=>'Có lỗi trong quá trình xử lý !?', 'success'=>false]);
+                    }
+                    
                 }
-                
-                \DB::commit();
 
                 return response()->json(['msg'=>'Thanh toán thành công !', 'success'=>true,'data'=>['stu_id' => $stuId, 'stu_wallet'=> $bWallet] ]);
             } catch(\Exception $e){
                 \DB::rollback();
+                throw $e;
                 return response()->json(['msg'=>'Có lỗi trong quá trình xử lý !', 'success'=>false]);
             }
         }

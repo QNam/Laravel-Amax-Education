@@ -67,8 +67,9 @@ class Course extends Model
     {
         $bill = new BillModel();
 
-        $counter = $bill::where(['detail_bill.cou_id' => $cou_id,'bill.stu_id' => $stu_id ])
+        $counter = $bill::where(['register.cou_id' => $cou_id,'bill.stu_id' => $stu_id ])
                     ->join('detail_bill','bill.bill_id','detail_bill.bill_id')
+                    ->join('register','register.reg_id','detail_bill.reg_id')
                     ->count();
 
         if($counter > 0) return true;
@@ -79,18 +80,17 @@ class Course extends Model
 
     public function getCourseOfStudent($stu_id)
     {
-        $course = new Course();
 
-        return $course::join('register','register.cou_id','course.cou_id')
+        return $this::where('student.stu_id', $stu_id)
+                        ->join('register','register.cou_id','course.cou_id')
                         ->join('student','student.stu_id','register.stu_id')
                         ->join('teacher','course.cou_teacher','teacher.tea_id')
                         ->join('subject','course.cou_subject','subject.sub_id')
-                        ->where('student.stu_id', $stu_id)
                         ->get(['course.*','register.status','tea_name','sub_name']);
 
     }
 
-     public function students()
+    public function students()
     {
         return $this->belongsToMany(Student::class,'register','cou_id','stu_id');
     }

@@ -23,35 +23,15 @@ class Student extends Model
 
     public function getStudentInfo($filter = [])
     {
-        $student = new Student();
 
-        return $student::join('register','student.stu_id','register.stu_id')
+        return $this::where($filter)
+                        ->join('register','student.stu_id','register.stu_id')
                         ->join('course','course.cou_id','register.cou_id')
-                        ->where($filter)
                         ->groupBy('student.stu_id')
                         ->orderBy('updated_at','DESC')
                         ->get(['student.*']);
     }
 
-
-    // public function updateStudent($stu_id,$data)
-    // {
-    //     $reg = new RegModel();
-
-    //     try {
-    //          \DB::beginTransaction();
-    //          $reg->resetRegisterCourse($stu_id);
-
-    //          //.....
-
-    //          $this::where('stu_id' => $stu_id)->update($data);
-    //           \DB::commit();  
-    //     } catch (\Exception $e) {
-    //         \DB::rollback();
-
-    //         return false;
-    //     }
-    // }
 
 
     public function incrementGradeAllStudent()
@@ -60,7 +40,7 @@ class Student extends Model
         try{
             \DB::beginTransaction();
 
-            $this::increment('stu_grade',1);
+            $this::where(['stu_grade','<',12])->increment('stu_grade',1);
             
             \DB::commit();  
 
