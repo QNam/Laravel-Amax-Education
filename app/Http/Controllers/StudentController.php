@@ -197,6 +197,7 @@ class StudentController extends Controller
             $bill::where('stu_id',$stu_id)->delete();
                         
             $reg::where('stu_id',$stu_id)->delete();
+            $student::where('stu_id',$stu_id)->delete();
 
            
             \DB::commit();  
